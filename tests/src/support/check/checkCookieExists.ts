@@ -1,0 +1,27 @@
+/**
+ * Check if a cookie with the given name exists
+ * @param  {[type]}   name      The name of the cookie
+ * @param  {[type]}   falseCase Whether or not to check if the cookie exists or
+ *                              not
+ */
+export default async (name: string, falseCase: boolean): Promise<void> => {
+  /**
+   * The cookie as retrieved from the browser
+   * @type {Object}
+   */
+  const cookie = await browser.getCookies(name);
+
+  if (falseCase) {
+    await expect(cookie).toHaveLength(
+      0,
+      // @ts-expect-error
+      `Expected cookie "${name}" not to exists but it does`
+    );
+  } else {
+    await expect(cookie).not.toHaveLength(
+      0,
+      // @ts-expect-error
+      `Expected cookie "${name}" to exists but it does not`
+    );
+  }
+};

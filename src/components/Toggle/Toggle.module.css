@@ -1,0 +1,28 @@
+.toggle {
+  width: 28px;
+  height: 16px;
+  background-color: var(--gray-6);
+  position: relative;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background-color 0.3s;
+}
+
+.on {
+  background-color: var(--system-link);
+}
+
+.toggleCircle {
+  width: 12px;
+  height: 12px;
+  background-color: var(--colors-white);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: left 0.3s;
+}
+
+.toggle.on .toggleCircle {
+  left: 14px;
+}

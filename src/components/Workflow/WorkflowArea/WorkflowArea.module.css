@@ -1,0 +1,14 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  padding: 0 36px;
+}
+
+.topBlock {
+  height: 12px;
+}
+
+.over {
+  border-bottom: 1px solid var(--system-link);
+}

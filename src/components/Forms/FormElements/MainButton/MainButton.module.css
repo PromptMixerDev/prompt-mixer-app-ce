@@ -1,0 +1,18 @@
+.button {
+  display: flex;
+  width: 320px;
+  height: 32px;
+  padding: 8px 9px;
+  text-align: center;
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  border-radius: 4px;
+  color: var(--lable-secondary);
+  background: var(--system-hover);
+}
+
+.activeButton {
+  color: var(--gray-14);
+  background: var(--system-link);
+}

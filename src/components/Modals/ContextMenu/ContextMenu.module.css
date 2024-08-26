@@ -1,0 +1,11 @@
+.wrapper {
+  position: absolute;
+  background-color: var(--backgrounds-tetriary);
+  color: var(--lable-primary);
+  border-radius: 6px;
+  box-shadow:
+    0px 8px 32px 0px rgba(15, 15, 15, 0.2),
+    0px 3px 6px 0px rgba(15, 15, 15, 0.1),
+    0px 0px 0px 1px rgba(15, 15, 15, 0.05);
+  z-index: 1;
+}

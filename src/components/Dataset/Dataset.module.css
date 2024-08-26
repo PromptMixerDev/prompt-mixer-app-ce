@@ -1,0 +1,17 @@
+.wrapper {
+  height: 100%;
+  box-sizing: border-box;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6px;
+  height: 40px;
+}
+
+.content {
+  padding: 32px 40px;
+  margin: 0 auto;
+  height: calc(100% - 104px);
+}

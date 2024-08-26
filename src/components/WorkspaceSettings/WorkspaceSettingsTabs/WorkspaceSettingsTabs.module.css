@@ -1,0 +1,15 @@
+.wrapper {
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  gap: 12px;
+}
+
+.inactive {
+  opacity: 0.65;
+}
+
+.tabButton {
+  padding: 0;
+}

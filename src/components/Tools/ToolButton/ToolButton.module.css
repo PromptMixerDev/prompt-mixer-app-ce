@@ -1,0 +1,13 @@
+.buttons {
+  position: absolute;
+  display: flex;
+}
+
+.icon {
+  font-weight: var(--font-weight-medium);
+  transition: transform 0.25s;
+}
+
+.collapsed {
+  transform: rotate(-0.25turn);
+}

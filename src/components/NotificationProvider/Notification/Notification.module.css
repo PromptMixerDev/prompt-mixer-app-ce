@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  gap: 8px;
+  width: 360px;
+  padding: 10px 24px 10px 12px;
+  border-radius: 8px;
+  background: var(--backgrounds-tetriary);
+  box-shadow:
+    0px 8px 32px 0px rgba(15, 15, 15, 0.2),
+    0px 3px 6px 0px rgba(15, 15, 15, 0.1),
+    0px 0px 0px 1px rgba(15, 15, 15, 0.05);
+  box-sizing: border-box;
+}
+
+.success {
+  color: var(--green-6);
+}
+
+.error {
+  color: var(--red-6);
+}
+
+.content {
+  color: var(--lable-orimary);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+}

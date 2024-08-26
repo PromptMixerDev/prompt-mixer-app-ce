@@ -1,0 +1,106 @@
+name: Copy Release to Public Repository
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: 'The tag of the release to copy'
+        required: true
+        default: 'latest'
+
+jobs:
+  copy-release:
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup jq and curl
+        run: sudo apt-get update && sudo apt-get install -y jq curl
+
+      - name: Determine TAG_NAME
+        id: get_tag
+        env:
+          ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          SOURCE_REPO: 'PromptMixerDev/prompt-mixer-app'
+        run: |
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            echo "::set-output name=TAG_NAME::${{ github.event.release.tag_name }}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            if [[ "${{ github.event.inputs.release_tag }}" == "latest" ]]; then
+              TAG_NAME=$(curl -sH "Authorization: token $ACCESS_TOKEN" \
+              "https://api.github.com/repos/$SOURCE_REPO/releases/latest" | jq -r .tag_name)
+            else
+              TAG_NAME="${{ github.event.inputs.release_tag }}"
+            fi
+            echo "::set-output name=TAG_NAME::$TAG_NAME"
+          fi
+
+      - name: Check if the release already exists in the target repo
+        id: check_release
+        env:
+          ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          TARGET_REPO: 'PromptMixerDev/prompt-mixer-releases'
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }}
+        run: |
+          RELEASE_DATA=$(curl -sH "Authorization: token $ACCESS_TOKEN" \
+          "https://api.github.com/repos/$TARGET_REPO/releases/tags/$TAG_NAME")
+          EXISTS=$(echo "$RELEASE_DATA" | jq -r '.message != "Not Found"')
+          if [ "$EXISTS" = "true" ]; then
+            echo "Release exists."
+            echo "::set-output name=EXISTS::true"
+          else
+            echo "Release does not exist."
+            echo "::set-output name=EXISTS::false"
+          fi
+        
+      - name: Create a release in the target repo if it does not exist
+        if: steps.check_release.outputs.EXISTS == 'false'
+        env:
+          ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          TARGET_REPO: 'PromptMixerDev/prompt-mixer-releases'
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }}
+        run: |
+          curl -sH "Authorization: token $ACCESS_TOKEN" \
+          -X POST \
+          -d "{\"tag_name\": \"$TAG_NAME\", \"name\": \"Release $TAG_NAME\", \"body\": \"Release description here\", \"draft\": false, \"prerelease\": false}" \
+          "https://api.github.com/repos/$TARGET_REPO/releases"
+        
+      - name: Upload assets to the release
+        env:
+          ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
+          SOURCE_REPO: 'PromptMixerDev/prompt-mixer-app'
+          TARGET_REPO: 'PromptMixerDev/prompt-mixer-releases'
+          TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }}
+        run: |
+          ASSETS_URL=$(curl -sH "Authorization: token $ACCESS_TOKEN" \
+          "https://api.github.com/repos/$SOURCE_REPO/releases/tags/$TAG_NAME" | jq -r '.assets_url')
+      
+          UPLOAD_URL=$(curl -sH "Authorization: token $ACCESS_TOKEN" \
+          "https://api.github.com/repos/$TARGET_REPO/releases/tags/$TAG_NAME" | jq -r .upload_url | sed -e "s/{?name,label}//")
+      
+          ASSETS=$(curl -sH "Authorization: token $ACCESS_TOKEN" $ASSETS_URL)
+          ASSETS_LENGTH=$(echo $ASSETS | jq '. | length')
+      
+          for ((i=0; i<$ASSETS_LENGTH; i++)); do
+            ASSET_URL=$(echo $ASSETS | jq -r ".[$i].url")
+            ASSET_NAME=$(echo $ASSETS | jq -r ".[$i].name")
+            ASSET_CONTENT_TYPE=$(echo $ASSETS | jq -r ".[$i].content_type")
+      
+            # Include only Mac builds and other non-zip files, exclude general .zip and .gzip archives
+            if [[ "$ASSET_NAME" != *"PromptMixer-"*".zip" ]] && [[ "$ASSET_NAME" == *".zip" || "$ASSET_NAME" == *".gzip" ]]; then
+              echo "Skipping $ASSET_NAME because it is a .zip or .gzip file not matching Mac build patterns."
+              continue
+            fi
+      
+            curl -L -H "Authorization: token $ACCESS_TOKEN" -H "Accept: application/octet-stream" $ASSET_URL --output $ASSET_NAME
+      
+            echo "Uploading $ASSET_NAME to $TARGET_REPO under tag $TAG_NAME"
+            curl -X POST -H "Authorization: token $ACCESS_TOKEN" -H "Content-Type: $ASSET_CONTENT_TYPE" \
+            --data-binary @$ASSET_NAME "$UPLOAD_URL?name=$(basename "$ASSET_NAME")"
+          done
+

@@ -1,0 +1,43 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  padding-bottom: 24px;
+}
+
+.logo {
+  display: flex;
+  justify-content: center;
+  padding: 24px 20px;
+}
+
+.main {
+  display: flex;
+  padding: 12px 20px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.title {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+.info {
+  text-align: center;
+  font-size: var(--font-size-small);
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 20px;
+  align-items: center;
+}
+.button {
+  width: 220px;
+  height: 28px;
+  background: var(--system-hover);
+}

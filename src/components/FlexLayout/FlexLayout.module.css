@@ -1,0 +1,39 @@
+.wrapper {
+  position: absolute;
+  width: calc(100% - 12px);
+  min-height: calc(100vh - 46px);
+  margin: 0 6px 6px 6px;
+  box-sizing: border-box;
+  background-color: var(--backgrounds-secondary);
+}
+
+.tabContentWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.tabWrapper {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tabText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.tabImage {
+  max-width: 16px;
+  max-height: 16px;
+  border-radius: 2px;
+}
+
+.tabImagePlaceholder {
+  width: 16px;
+  height: 16px;
+  font-size: var(--font-size-small);
+  border-radius: 2px;
+}

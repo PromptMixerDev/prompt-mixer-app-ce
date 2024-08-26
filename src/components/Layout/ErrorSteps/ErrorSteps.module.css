@@ -1,0 +1,11 @@
+.errorSteps {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.errorSteps a {
+  padding-left: 5px;
+  color: var(--system-link);
+}

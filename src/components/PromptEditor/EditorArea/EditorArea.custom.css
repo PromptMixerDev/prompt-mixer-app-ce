@@ -1,0 +1,13 @@
+.public-DraftEditor-content {
+  caret-color: var(--blue-6);
+}
+
+.public-DraftEditorPlaceholder-root {
+  position: absolute;
+  color: var(--lable-secondary);
+  pointer-events: none;
+}
+
+.public-DraftEditorPlaceholder-hasFocus {
+  display: none;
+}

@@ -1,0 +1,7 @@
+.title {
+  padding: 24px 0 12px;
+  font-size: var(--font-size-xlarge);
+  font-weight: var(--font-weight-medium);
+  border-bottom: 1px solid var(--system-separator);
+  cursor: pointer;
+}

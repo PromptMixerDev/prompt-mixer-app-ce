@@ -1,0 +1,18 @@
+.wrapper {
+  padding: 0 6px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  gap: 12px;
+}
+
+.tabButton > :first-child {
+  color: var(--gray-14);
+}
+
+.inactive {
+  opacity: 0.65;
+}
+.addButton {
+  margin-left: auto;
+}

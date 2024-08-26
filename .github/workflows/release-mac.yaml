@@ -1,0 +1,70 @@
+name: Release macOS
+
+on:
+  push:
+    tags:
+      - v*
+
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main'
+
+jobs:
+  build-macos:
+    name: Build macOS binaries
+    runs-on: macos-latest
+
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      APPLEID: ${{secrets.APPLEID}}
+      TEAMID: ${{secrets.TEAMID}}
+      APPLEIDPASS: ${{secrets.APPLEIDPASS}}
+      ASCPROVIDER: ${{secrets.ASCPROVIDER}}
+      CSC_KEY_PASSWORD: ${{secrets.MACOS_CERT_PASSWORD}}
+      REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
+      REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
+      REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
+      REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
+      REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
+      REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID }}
+      REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID }}
+      USE_HARD_LINKS: false
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "21.x"
+      - name: Decode and Import Certificate
+        run: |
+          echo "${{ secrets.MAC_CERTIFICATE }}" | base64 --decode > ./certificate.p12
+          security create-keychain -p "" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "" build.keychain
+          security import ./certificate.p12 -k build.keychain -P $CSC_KEY_PASSWORD -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple: -s -k "" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+      - name: Install Dependencies
+        run: |
+          yarn
+      - name: Build and package application
+        run: |
+          yarn build:mac
+      - name: Verify notarization
+        run: |
+          codesign --verify --deep --strict --verbose=2 ./dist/mac/PromptMixer.app
+          codesign --verify --deep --strict --verbose=2 ./dist/mac-arm64/PromptMixer.app
+          codesign --verify --deep --strict --verbose=2 ./dist/mac-universal/PromptMixer.app
+      - name: Get universal binary shasum
+        run: |
+          shasum -a 256 ./dist/PromptMixer-*.universal.dmg
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.dmg, dist/*.zip, dist/*.yml
+          draft: true
+          token: ${{ secrets.GH_TOKEN }}

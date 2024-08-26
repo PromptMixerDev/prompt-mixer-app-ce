@@ -1,0 +1,10 @@
+.errorMessage {
+  display: flex;
+  padding: 24px 8px;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--lable-danger);
+}

@@ -1,0 +1,29 @@
+.wrapper {
+  padding: 6px 0;
+  width: 100%;
+  color: var(--lable-primary);
+}
+
+.borderedWrapper {
+  display: flex;
+  padding: 4px 12px;
+  width: 100%;
+  justify-content: start;
+  align-items: center;
+  gap: 8px;
+  border-radius: 6px;
+  border: 1px solid var(--system-separator);
+  cursor: pointer;
+}
+
+.fileIcon {
+  color: var(--lable-secondary);
+}
+
+.close {
+  margin-left: auto;
+}
+
+.over {
+  border-bottom: 1px solid var(--system-link);
+}

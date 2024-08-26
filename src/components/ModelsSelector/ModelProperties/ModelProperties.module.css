@@ -1,0 +1,10 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 0 24px 36px;
+}
+
+.addPropertyButton {
+  color: var(--lable-secondary);
+}

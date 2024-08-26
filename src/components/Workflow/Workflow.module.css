@@ -1,0 +1,37 @@
+.wrapper {
+  height: 100%;
+  box-sizing: border-box;
+}
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6px;
+  height: 40px;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 40px;
+  margin: 0 auto;
+  max-width: 710px;
+  height: calc(100% - 104px);
+}
+
+.variables {
+  padding-left: 36px;
+}
+
+.variableWrapper {
+  min-height: 34px;
+  padding: 4px 0;
+}
+
+.runButton > :first-child {
+  color: var(--gray-14);
+}
+
+.disabledRunButton > :first-child {
+  color: var(--lable-secondary);
+}

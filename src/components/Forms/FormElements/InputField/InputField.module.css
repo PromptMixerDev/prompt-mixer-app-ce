@@ -1,0 +1,23 @@
+.inputField {
+  display: flex;
+  width: 320px;
+  padding: 7px 9px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  outline: none;
+  caret-color: var(--lable-primary);
+  color: var(--lable-primary);
+  background: var(--system-hover);
+  border: 1px solid transparent;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+.filledInputField {
+  background-color: transparent;
+  border: 1px solid var(--system-separator);
+}

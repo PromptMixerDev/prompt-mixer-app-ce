@@ -1,0 +1,8 @@
+.textarea {
+  border: none;
+  outline: none;
+  height: auto;
+  resize: none;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
