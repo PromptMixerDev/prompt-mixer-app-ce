@@ -1,0 +1,99 @@
+.wrapper {
+  max-width: 240px;
+  min-width: 180px;
+  max-height: 200px;
+  padding: 4px;
+  overflow: auto;
+}
+
+.group {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--system-separator);
+}
+.group:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.menuItem {
+  display: flex;
+  padding: 2px 6px;
+  gap: 6px;
+  height: 20px;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.menuItem:hover {
+  background-color: var(--system-hover);
+}
+
+.menuItemIcon {
+  width: var(--icon-size);
+  color: var(--lable-secondary);
+}
+
+.email {
+  padding: 4px 0px;
+  color: var(--lable-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+}
+
+.workspaceItem {
+  display: flex;
+  align-items: center;
+  height: 30px;
+  gap: 6px;
+  padding: 4px 6px;
+  flex: 1 0 0;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.workspaceItem:hover {
+  background-color: var(--system-hover);
+}
+
+.imagePlaceholder {
+  width: 20px;
+  height: 20px;
+  font-size: var(--font-size-medium);
+  border-radius: 3px;
+}
+
+.image {
+  max-width: 20px;
+  max-height: 20px;
+  border-radius: 3px;
+}
+
+.workspaceInfo {
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workspaceName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--lable-primary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.workspacePlan {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--lable-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+}
+
+.settingButton {
+  margin-left: auto;
+}

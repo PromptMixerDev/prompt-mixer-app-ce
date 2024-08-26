@@ -1,0 +1,36 @@
+.info {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  white-space: pre;
+  text-align: center;
+}
+
+.imageSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fileInput {
+  display: none;
+}
+
+.fileLabel {
+  color: var(--lable-secondary);
+  text-align: center;
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+  cursor: pointer;
+}
+
+.inputWithLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  color: var(--lable-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+}

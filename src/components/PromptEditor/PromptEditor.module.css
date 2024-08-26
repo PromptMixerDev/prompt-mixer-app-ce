@@ -1,0 +1,34 @@
+.header {
+  position: sticky;
+  top: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 6px;
+  height: 40px;
+  background: var(--backgrounds-primary);
+  z-index: 1;
+}
+
+.runButton > :first-child {
+  color: var(--gray-14);
+}
+
+.disabledRunButton > :first-child {
+  color: var(--lable-secondary);
+}
+
+.content {
+  padding: 32px 40px;
+  max-width: 710px;
+  margin: 0 auto;
+}
+
+.variables {
+  padding-left: 36px;
+}
+
+.variableWrapper {
+  min-height: 34px;
+  padding: 4px 0;
+}

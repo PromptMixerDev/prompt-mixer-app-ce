@@ -1,0 +1,106 @@
+h1 {
+  font-size: var(--font-size-xxxlarge);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-relaxed);
+}
+
+h2 {
+  font-size: 18px;
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+h3 {
+  font-size: var(--font-size-xlarge);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+h4 {
+  font-size: var(--font-size-medium);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-normal);
+}
+
+h5 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+h6 {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-tight);
+}
+
+p {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-tight);
+}
+
+a {
+  color: var(--system-link);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-tight);
+}
+
+ul li::marker {
+  color: var(--lable-secondary);
+  font-size: var(--font-size-base);
+}
+
+ol li::marker {
+  color: var(--lable-secondary);
+}
+
+pre {
+  background-color: transparent !important;
+}
+
+code {
+  color: var(--lable-primary) !important;
+  font-family: 'IBMPlexMono' !important;
+  font-size: var(--font-size-base) !important;
+  line-height: var(--line-height-tight) !important;
+  text-shadow: none !important;
+}
+
+code span {
+  background-color: transparent !important;
+}
+
+table {
+  border-radius: 6px;
+  border-collapse: collapse;
+}
+
+th {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--system-separator);
+  padding: 8px;
+  text-align: left;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+}
+
+td {
+  padding: 8px;
+  border: 1px solid var(--system-separator);
+  text-align: left;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
+}
+
+pre {
+  width: 100%;
+  white-space: pre-wrap; /* Allow line breaks */
+  word-break: break-all;
+  word-wrap: break-word;
+}
+
+/* add specificity to rewrite prisma.css */
+pre code[class*='language-'] {
+  white-space: pre-wrap;
+}

@@ -1,0 +1,13 @@
+.header {
+  display: flex;
+  padding: 48px 0px 24px 0px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  font-size: var(--font-size-xxlarge);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-relaxed);
+  white-space: pre;
+  text-align: center;
+}

@@ -1,0 +1,18 @@
+.wrapper {
+  position: relative;
+  padding: 24px 0 24px 8px;
+  color: var(--lable-primary);
+}
+
+.editor {
+  margin: 0 110px 0 36px;
+  min-height: 100px;
+  flex-grow: 1;
+  font-family: var(--font-family-secondary);
+  font-size: var(--font-size-large);
+  line-height: var(--line-height-relaxed);
+}
+
+.comment * {
+  color: var(--lable-secondary) !important;
+}

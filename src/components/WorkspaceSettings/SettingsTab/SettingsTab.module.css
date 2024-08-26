@@ -1,0 +1,52 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.inputWithLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
+  padding-bottom: 4px;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--lable-primary);
+}
+
+.input {
+  width: 100%;
+}
+
+.membersSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.labelArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 6px;
+}
+
+.manageSeats {
+  padding: 0;
+  color: var(--system-link);
+  background-color: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.inputArea {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}

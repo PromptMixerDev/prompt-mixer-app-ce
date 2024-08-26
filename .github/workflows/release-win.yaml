@@ -1,0 +1,140 @@
+name: Release Windows
+
+on:
+  push:
+    tags:
+      - v*
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to build'
+        required: true
+        default: 'main'
+
+jobs:
+  build-windows:
+    name: Build Windows binaries
+    runs-on: windows-latest
+    outputs:
+      version: ${{ steps.set_output.outputs.version }}
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
+      REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
+      REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
+      REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
+      REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
+      REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID }}
+      REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '21.x'
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.yarn
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies
+        uses: nick-fields/retry@v3
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: yarn install --frozen-lockfile
+
+      - name: Extract Version from package.json and Set as Output
+        id: set_output
+        run: |
+          $version = node -p "require('./package.json').version"
+          echo "Version: $version"
+          echo "version=$version" >> $env:GITHUB_OUTPUT
+        shell: pwsh
+
+      - name: Debug version output
+        run: echo "Extracted version is ${{ steps.set_output.outputs.version }}"
+
+      - name: Build and package application
+        run: |
+          yarn format
+          yarn build:win
+
+      - name: Upload Windows artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: exe
+          path: dist/*.exe
+
+  sign-artifacts:
+    needs: build-windows
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      ES_USERNAME: ${{ secrets.ES_USERNAME }}
+      ES_PASSWORD: ${{ secrets.ES_PASSWORD }}
+      CREDENTIAL_ID: ${{ secrets.CREDENTIAL_ID }}
+      ES_TOTP_SECRET: ${{ secrets.ES_TOTP_SECRET }}
+    steps:
+      - name: Download Windows artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: exe
+          path: ${{ github.workspace }}/dist/
+
+      - name: Create Directory
+        run: mkdir -p ${{ github.workspace }}/dist/signed
+
+      - name: Install osslsigncode
+        run: sudo apt-get update && sudo apt-get install -y osslsigncode
+
+      - name: Sign Windows executable
+        uses: sslcom/esigner-codesign@develop
+        with:
+          command: sign
+          username: ${{ secrets.ES_USERNAME }}
+          password: ${{ secrets.ES_PASSWORD }}
+          credential_id: ${{ secrets.CREDENTIAL_ID }}
+          totp_secret: ${{ secrets.ES_TOTP_SECRET }}
+          file_path: ${{ github.workspace }}/dist/PromptMixer.${{ needs.build-windows.outputs.version }}.exe
+          output_path: ${{ github.workspace }}/dist/signed
+
+      - name: Verify Signed Executable
+        run: |
+          osslsigncode verify -in ${{ github.workspace }}/dist/signed/PromptMixer.${{ needs.build-windows.outputs.version }}.exe -CAfile /etc/ssl/certs/ca-certificates.crt -TSA-CAfile /etc/ssl/certs/ca-certificates.crt
+
+      - name: Generate latest.yml
+        run: |
+          echo "version: ${{ needs.build-windows.outputs.version }}" > ${{ github.workspace }}/dist/latest.yml
+          echo "files:" >> ${{ github.workspace }}/dist/latest.yml
+          echo "  - url: PromptMixer.${{ needs.build-windows.outputs.version }}.exe" >> ${{ github.workspace }}/dist/latest.yml
+          echo "    sha512: $(sha512sum ${{ github.workspace }}/dist/signed/PromptMixer.${{ needs.build-windows.outputs.version }}.exe | cut -d ' ' -f 1)" >> ${{ github.workspace }}/dist/latest.yml
+          echo "    size: $(stat -c%s ${{ github.workspace }}/dist/signed/PromptMixer.${{ needs.build-windows.outputs.version }}.exe)" >> ${{ github.workspace }}/dist/latest.yml
+          echo "path: PromptMixer.${{ needs.build-windows.outputs.version }}.exe" >> ${{ github.workspace }}/dist/latest.yml
+          echo "sha512: $(sha512sum ${{ github.workspace }}/dist/signed/PromptMixer.${{ needs.build-windows.outputs.version }}.exe | cut -d ' ' -f 1)" >> ${{ github.workspace }}/dist/latest.yml
+          echo "releaseDate: $(date -u +"%Y-%m-%dT%H:%M:%S.000Z")" >> ${{ github.workspace }}/dist/latest.yml
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            ${{ github.workspace }}/dist/signed/*.exe
+            ${{ github.workspace }}/dist/latest.yml
+          draft: true
+          token: ${{ secrets.GH_TOKEN }}
+          name: Release ${{ needs.build-windows.outputs.version }}
+          body: |
+            Release notes for version ${{ needs.build-windows.outputs.version }}
+
+            <!-- Add your release notes here -->
+
+      - name: Clean up artifacts
+        if: always()
+        run: |
+          rm -rf ${{ github.workspace }}/dist

@@ -1,0 +1,32 @@
+import type { Selector } from 'webdriverio';
+
+/**
+ * Check if the given element is visible inside the current viewport
+ * @param  {String}   selector   Element selector
+ * @param  {String}   falseCase Whether to check if the element is visible
+ *                              within the current viewport or not
+ */
+export default async (
+  selector: Selector,
+  falseCase: boolean
+): Promise<void> => {
+  /**
+   * The state of visibility of the given element inside the viewport
+   * @type {Boolean}
+   */
+  const isDisplayed = await $(selector).isDisplayedInViewport();
+
+  if (falseCase) {
+    await expect(isDisplayed).not.toEqual(
+      true,
+      // @ts-expect-error
+      `Expected element "${selector as string}" to be outside the viewport`
+    );
+  } else {
+    await expect(isDisplayed).toEqual(
+      true,
+      // @ts-expect-error
+      `Expected element "${selector as string}" to be inside the viewport`
+    );
+  }
+};

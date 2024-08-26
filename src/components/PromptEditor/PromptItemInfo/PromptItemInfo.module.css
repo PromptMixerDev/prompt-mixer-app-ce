@@ -1,0 +1,36 @@
+.number {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--system-hover);
+  border-radius: 100%;
+}
+
+.wrapper {
+  position: absolute;
+  display: flex;
+  gap: 12px;
+}
+
+.info {
+  display: flex;
+  width: 100px;
+  justify-content: flex-end;
+  gap: 4px;
+  user-select: none;
+}
+
+.tokens {
+  padding: 4px 8px;
+  color: var(--lable-secondary);
+}
+
+.hidden {
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+}

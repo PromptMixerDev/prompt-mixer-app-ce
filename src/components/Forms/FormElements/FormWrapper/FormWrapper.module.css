@@ -1,0 +1,9 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  width: 420px;
+  height: 550px;
+  color: var(--lable-primary);
+  box-sizing: border-box;
+  border-radius: 12px;
+}

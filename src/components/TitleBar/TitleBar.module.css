@@ -1,0 +1,75 @@
+.wrapper {
+  -webkit-app-region: drag;
+  height: 40px;
+  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  background-color: var(--backgrounds-secondary);
+}
+
+.buttons {
+  -webkit-app-region: no-drag;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.upgradeButton {
+  color: var(--green-6);
+  background: #5fad6533;
+}
+
+.upgradeButton:hover {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.1) 0%,
+      rgba(0, 0, 0, 0.1) 100%
+    ),
+    var(#5fad6533);
+}
+
+.upgradeButton:active {
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    ),
+    var(#5fad6533);
+}
+
+.image {
+  max-width: 16px;
+  max-height: 16px;
+  border-radius: 3px;
+}
+
+.imagePlaceholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 16px;
+  height: 16px;
+  font-size: 10px;
+  border-radius: 3px;
+  color: var(--yellow-6) !important;
+  background: var(--yellow-2);
+}
+
+.workspaceButton {
+  max-width: 240px;
+}
+
+.workspaceName {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.arrowIcon {
+  flex-shrink: 0;
+  transition: transform 0.25s;
+}
+
+.expanded {
+  transform: rotate(0.25turn);
+}

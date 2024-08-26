@@ -1,0 +1,396 @@
+import {fileURLToPath} from 'url';
+import path from 'path';
+import {app, BrowserWindow, ipcMain, shell} from 'electron';
+import fs from 'fs';
+import isDev from 'electron-is-dev';
+import { config } from 'dotenv';
+import pkg from 'electron-updater';
+import firstTimeSetup, { installConnector } from './connectorInstaller.js';
+import { uninstallConnector } from './connectorUninstaller.js';
+
+config();
+const { autoUpdater } = pkg;
+
+// Calculate __dirname equivalent for ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+
+let mainWindow;
+let splash;
+
+const isTest = process.env.NODE_ENV === 'test'
+if (process.env.NODE_ENV === 'test') {
+    import('wdio-electron-service/main');
+}
+
+async function createWindow() {
+    mainWindow = new BrowserWindow({
+        width: 1600,
+        height: 900,
+        frame: false,
+        show: false,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
+        },
+    });
+
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+        splash = null
+    });
+
+    mainWindow.on('focus', () => {
+      mainWindow.webContents.send('focus');
+  });
+
+    splash = new BrowserWindow({
+        width: 1600,
+        height: 900,
+        frame: false,
+        transparent: true,
+      });
+    
+    const splashURL = isDev
+      ? `file://${path.join(__dirname, './public/loading.html')}`
+      : `file://${path.join(__dirname, './build/loading.html')}`;
+
+    const startURL = isDev
+      ? 'http://localhost:3000'
+      : `file://${path.join(__dirname, './build/index.html')}`;
+
+    try {
+        await splash.loadURL(splashURL);
+        await mainWindow.loadURL(startURL);
+        mainWindow.show();
+        splash.close();
+        checkForDeferredUpdate();
+    } catch (error) {
+        console.log('CreateWindow error', error);
+    }
+}
+
+function checkForDeferredUpdate() {
+  const config = readUpdateConfig();
+  if (config.updateOnNextLaunch) {
+    autoUpdater.downloadUpdate();
+    config.updateOnNextLaunch = false;
+    writeUpdateConfig(config);
+  }
+}
+
+function writeUpdateConfig(data) {
+  const configFilePath = path.join(app.getPath('userData'), 'update-config.json');
+  fs.writeFileSync(configFilePath, JSON.stringify(data));
+}
+
+function readUpdateConfig() {
+  const configFilePath = path.join(app.getPath('userData'), 'update-config.json');
+  if (!fs.existsSync(configFilePath)) return {};
+  const data = fs.readFileSync(configFilePath, 'utf-8');
+  return JSON.parse(data);
+}
+
+// Function to handle open URL
+function handleOpenUrl(url) {
+    console.log('Opened via custom protocol:', url);
+    // Additional logic to handle the URL can be added here
+}
+
+app.on('ready', async () => {
+    app.setAsDefaultProtocolClient('promptmixer');
+    await createWindow();
+
+    // macOS specific: handle open-url event
+    app.on('open-url', (event, url) => {
+        event.preventDefault();
+        handleOpenUrl(url);
+    });
+    
+    await firstTimeSetup();
+    if (mainWindow) {
+        mainWindow.webContents.send('setup-complete');
+    }
+
+    mainWindow.webContents.on('new-window', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    });
+
+    mainWindow.webContents.on('will-navigate', (event, url) => {
+        if (url !== mainWindow.webContents.getURL()) {
+            event.preventDefault();
+            shell.openExternal(url);
+        }
+    });
+});
+
+// Windows/Linux: handle second instance
+app.on('second-instance', (event, commandLine) => {
+    const url = commandLine.find(arg => arg.startsWith('promptmixer://'));
+    if (url) handleOpenUrl(url);
+});
+
+async function checkMainJsExists(connectorsPath, folder) {
+    try {
+        await fs.promises.access(path.join(connectorsPath, folder, 'main.js'), fs.constants.F_OK);
+        return true;
+    } catch (error) {
+        return false;
+    }
+}
+
+
+async function getInstalledConnectors() {
+    try {
+        const connectorsPath = path.join(app.getPath('userData'), 'connectors');
+        const folders = await fs.promises.readdir(connectorsPath);
+        const installedConnectors = [];
+
+        for (const folder of folders) {
+            if (await checkMainJsExists(connectorsPath, folder)) {
+                const configPath = path.join(connectorsPath, folder, 'main.js');
+                const configUrl = new URL(`file://${configPath.replace(/\\/g, '/')}`);
+                const configFile = await import(configUrl.href);
+                if (configFile) {
+                    installedConnectors.push({ connectorFolder: folder, ...configFile.config });
+                }
+            }
+        }
+        return installedConnectors;
+    } catch (error) {
+        console.error('Error getting installed connectors:', error);
+        return [];
+    }
+}
+
+
+async function runConnector(connectorFolderPath, model, prompts, properties, settings) {
+    try {
+        const connectorPath = path.join(app.getPath('userData'), 'connectors', connectorFolderPath, 'main.js');
+        const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`).href;
+
+        // Dynamically import the connector script using the URL
+        const plugin = await import(connectorUrl);
+        if (plugin && typeof plugin.main === 'function') {
+            // Call the main function of the connector script
+            return await plugin.main(model, prompts, properties, settings);
+        }
+    } catch (error) {
+        console.error('Error running plugin:', error);
+        return { Error: error, ModelType: model };
+    }
+}
+
+ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
+  const installedConnectors = await getInstalledConnectors();
+
+  if (!savedSettings) {
+    event.reply('installed-connectors', installedConnectors);
+  }
+
+  try {
+    let updatedConnectors = [];
+    if (installedConnectors && savedSettings) {
+      installedConnectors?.forEach((connector) => {
+        const settingForConnector = savedSettings.find((savedSetting) => {
+          // two cases: when connector doesn't have settings or when user hasn't provided them yet
+          if (
+            connector.settings.length === 0 ||
+            connector.settings.some((setting) => !setting.value)
+          )
+            return true;
+          return savedSetting.ConnectorFolder === connector.connectorFolder;
+        });
+
+        if (settingForConnector) {
+          updatedConnectors.push(
+            callGetDynamicModelList(connector, settingForConnector)
+          );
+        } else {
+          updatedConnectors.push(connector);
+        }
+      });
+    }
+
+    try {
+      const res = await Promise.all(updatedConnectors);
+      event.reply('installed-connectors', res);
+    } catch (error) {
+      event.reply('installed-connectors', installedConnectors);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+});
+
+ipcMain.on('run-connector-script', async (event, connector, prompts, properties, settings, outputId, workflow) => {
+    const baseDir  = path.join(app.getPath('userData'), 'connectors')
+    const connectorPath = path.join(baseDir, connector.ConnectorFolder, 'main.js');
+
+    try {
+        await fs.promises.stat(connectorPath);
+        // If fs.stat does not throw, the file exists, so run the connector
+        const res = await runConnector(connector.ConnectorFolder, connector.Model, prompts, properties, settings);
+        event.reply('connector-output', outputId, connector.Model, res, workflow);
+    } catch (error) {
+        // If fs.stat throws an error, the file does not exist or another error occurred
+        console.error(`ConnectorPath error: ${error}`);
+        event.reply('connector-output', outputId, connector.Model, { Error: error, ModelType: connector.Model }, workflow);
+    }
+});
+
+ipcMain.on(
+  'install-connector',
+  async (event, connectorName, githubReleaseApiUrl) => {
+    try {
+      await installConnector(connectorName, githubReleaseApiUrl);
+
+      event.reply('install-connector-success');
+    } catch (error) {
+      event.reply('install-connector-failed', error);
+    }
+  }
+);
+
+async function callGetDynamicModelList(connector, savedSettings) {
+  function hasGetDynamicModelList(obj) {
+    return (
+      obj !== null &&
+      typeof obj === 'object' &&
+      typeof obj.getDynamicModelList === 'function'
+    );
+  }
+
+  const baseDir = path.join(app.getPath('userData'), 'connectors');
+
+  try {
+    const connectorPath = path.join(
+      baseDir,
+      connector.connectorFolder,
+      'main.js'
+    );
+
+    const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`)
+      .href;
+
+    const plugin = await import(connectorUrl);
+
+    if (hasGetDynamicModelList(plugin)) {
+      const hasUserSettings = savedSettings.Settings?.every((setting) => {
+        return !!setting?.Value;
+      });
+
+      if (hasUserSettings) {
+        try {
+          const models = await plugin.getDynamicModelList(
+            savedSettings.Settings
+          );
+          connector.models = models;
+        } catch (error) {
+          console.log("Can't call getDynamicModelList from connector");
+        }
+      }
+    }
+
+    return connector;
+  } catch (e) {
+    console.log(e);
+  }
+}
+
+ipcMain.on('update-connector', async (event, connector, savedSettings) => {
+  try {
+    const updatedConnector = callGetDynamicModelList(connector, savedSettings);
+
+    event.reply('update-connector-success', updatedConnector);
+  } catch (error) {
+    event.reply('update-connector-failed', error);
+  }
+});
+
+ipcMain.on('remove-connector', async (event, connectorName) => {
+    try {
+        await uninstallConnector(connectorName)
+        event.reply('remove-connector-success');
+    } catch (error) {
+        event.reply('remove-connector-failed', error);
+    }
+});
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+app.on('activate', async () => {
+    if (mainWindow === null) {
+        await createWindow();
+    }
+});
+
+ipcMain.on('minimize-window', () => {
+    mainWindow.minimize();
+});
+
+ipcMain.on('maximize-window', () => {
+    if (mainWindow.isMaximized()) {
+        mainWindow.unmaximize();
+    } else {
+        mainWindow.maximize();
+    }
+});
+
+ipcMain.on('close-window', () => {
+    mainWindow.close();
+});
+
+ipcMain.on('open-url', (event, url) => {
+    shell.openExternal(url);
+});
+
+ipcMain.on('get-app-version', (event) => {
+  event.reply('app-version', app.getVersion());
+});
+
+ipcMain.on('check-for-updates', () => {
+  autoUpdater.checkForUpdates();
+});
+
+autoUpdater.on('update-available', (info) => {
+  mainWindow.webContents.send('update-available', info);
+});
+
+autoUpdater.on('update-not-available', () => {
+  mainWindow.webContents.send('update-not-available');
+});
+
+ipcMain.on('install-update', () => {
+  autoUpdater.downloadUpdate();
+});
+
+ipcMain.on('install-update-next-launch', (event) => {
+  const config = readUpdateConfig();
+  config.updateOnNextLaunch = true;
+  writeUpdateConfig(config);
+  event.reply('update-deferred');
+});
+
+autoUpdater.on('download-progress', (progressObj) => {
+  mainWindow.webContents.send('download-progress', progressObj);
+});
+
+autoUpdater.on('update-downloaded', (info) => {
+  const config = readUpdateConfig();
+  if (!config.updateOnNextLaunch) {
+    autoUpdater.quitAndInstall(false, true);
+  }
+});
+
+autoUpdater.on('error', (error) => {
+  mainWindow.webContents.send('update-error', error);
+});
+

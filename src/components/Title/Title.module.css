@@ -1,0 +1,14 @@
+.inputTitle {
+  color: var(--lable-primary);
+  font-size: 26px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 30px;
+  padding: 0 0 48px 36px;
+  display: block;
+  width: 100%;
+  min-height: 78px;
+  background-color: transparent;
+  border: none;
+  outline: none;
+  box-sizing: border-box;
+}

@@ -1,0 +1,31 @@
+.wrapper {
+  position: relative;
+  height: 100%;
+  padding: 12px 0;
+  color: var(--lable-primary);
+  overflow: scroll;
+  box-sizing: border-box;
+}
+
+.bottom {
+  height: 20px;
+}
+
+.loader {
+  position: absolute;
+  width: 100%;
+}
+
+.transparent {
+  opacity: 0.5;
+}
+
+.placeholder {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 0 48px;
+  text-align: center;
+  color: var(--lable-secondary);
+}

@@ -1,0 +1,24 @@
+.wrapper {
+  height: 84px;
+  border-bottom: 1px solid var(--system-separator);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+}
+
+.title {
+  font-weight: var(--font-weight-medium);
+}
+
+.description {
+  font-size: var(--font-size-small);
+  color: var(--lable-secondary);
+}
+
+.row:last-child {
+  border-bottom: none;
+}

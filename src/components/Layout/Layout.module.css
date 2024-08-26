@@ -1,0 +1,30 @@
+.wrapper {
+  height: 100%;
+  color: var(--lable-primary);
+}
+
+.header {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0 6px;
+  gap: 6px;
+  height: 40px;
+}
+
+.content {
+  height: calc(100% - 40px);
+  overflow-y: scroll;
+}
+
+.placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  gap: 32px;
+  padding: 0 48px;
+  text-align: center;
+  color: var(--lable-secondary);
+}

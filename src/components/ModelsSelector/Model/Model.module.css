@@ -1,0 +1,18 @@
+.info {
+  flex-shrink: 1;
+  padding: 0 18px;
+  color: var(--lable-secondary);
+  font-size: var(--font-size-small);
+  line-height: var(--line-height-base);
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.rightButton {
+  margin-left: auto;
+}
+
+.addModelButton > :first-child {
+  color: var(--lable-primary);
+}

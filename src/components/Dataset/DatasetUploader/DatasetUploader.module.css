@@ -1,0 +1,18 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  height: calc(100% - 104px);
+}
+
+.uploadArea {
+  display: flex;
+  align-items: center;
+  padding: 25px 10px;
+  max-width: 320px;
+  min-height: 96px;
+  color: var(--lable-secondary);
+  border: 1px dashed var(--system-separator);
+  box-sizing: border-box;
+}

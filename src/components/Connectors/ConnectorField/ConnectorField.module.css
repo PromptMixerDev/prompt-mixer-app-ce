@@ -1,0 +1,45 @@
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 6px 0;
+  min-height: 46px;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: border-box;
+  border-bottom: 1px solid var(--system-separator);
+}
+
+.label {
+  padding-right: 20px;
+  font-weight: var(--font-weight-medium);
+  text-wrap: nowrap;
+}
+
+.inputWrapper {
+  flex-grow: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  padding: 0 8px;
+  height: 24px;
+  max-width: 320px;
+  border: 1px solid var(--system-separator);
+  border-radius: 4px;
+}
+
+.input {
+  width: 100%;
+  border: none;
+  outline: none;
+  line-height: var(--line-height-base);
+  color: var(--lable-secondary);
+  background-color: transparent;
+}
+
+.eye {
+  display: flex;
+  align-items: center;
+  color: var(--lable-secondary);
+  cursor: pointer;
+}

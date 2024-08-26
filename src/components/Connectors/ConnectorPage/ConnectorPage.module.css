@@ -1,0 +1,28 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: var(--lable-primary);
+  box-sizing: border-box;
+}
+
+.title {
+  font-size: var(--font-size-xxlarge);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-relaxed);
+}
+
+.removeZone {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px 0;
+}
+
+.label {
+  padding-right: 20px;
+  font-weight: var(--font-weight-medium);
+  text-wrap: nowrap;
+}

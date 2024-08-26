@@ -1,0 +1,8 @@
+.buttons {
+  position: absolute;
+  display: flex;
+}
+
+.libraryIcon {
+  font-weight: var(--font-weight-medium);
+}

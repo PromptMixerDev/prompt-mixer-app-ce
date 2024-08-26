@@ -1,0 +1,32 @@
+.wrapper {
+  display: flex;
+  width: 400px;
+  height: 550px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.search {
+  width: 100%;
+  background-color: transparent !important;
+  border-bottom: 1px solid var(--system-separator);
+}
+
+.content {
+  display: flex;
+  padding: 8px;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.title {
+  padding: 4px 6px;
+  color: var(--lable-secondary);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  align-self: flex-start;
+}

@@ -1,0 +1,9 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 36px);
+  gap: 4px;
+  padding-top: 12px;
+  color: var(--lable-primary);
+  overflow: hidden;
+}

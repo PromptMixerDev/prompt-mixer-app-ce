@@ -1,0 +1,103 @@
+.wrapper {
+  padding: 2px 8px 2px 12px;
+}
+
+.content {
+  display: flex;
+  align-items: center;
+  height: 24px;
+  padding: 0 4px;
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.content:hover {
+  background-color: var(--system-hover);
+}
+
+.content > svg {
+  flex-shrink: 0;
+}
+
+.renameContent {
+  height: 22px;
+  border: 1px solid var(--system-link);
+}
+
+.renameContent:hover {
+  background-color: transparent;
+}
+
+.draggable > .content {
+  cursor: grab;
+}
+
+.renameContent > .title {
+  width: 100%;
+}
+
+.title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.dotIcon {
+  display: none;
+  margin-left: auto;
+  width: var(--icon-size);
+  height: var(--icon-size);
+  color: var(--lable-secondary);
+  cursor: pointer;
+}
+
+.content:hover > .dotIcon {
+  display: flex;
+  align-items: center;
+}
+
+.arrowIcon {
+  color: var(--lable-secondary);
+  margin-right: 2px;
+  transition: transform 0.25s;
+}
+
+.expanded {
+  transform: rotate(0.25turn);
+}
+
+.folderIcon {
+  color: var(--lable-secondary);
+  margin-right: 6px;
+}
+
+.workflowIcon,
+.datasetIcon {
+  margin-right: 6px;
+}
+
+.child .content {
+  padding-left: 20px;
+}
+
+.child > .wrapper {
+  padding: 2px 0;
+}
+
+.renameInput {
+  width: 100%;
+  padding: 0px;
+  margin-left: -1px;
+  font-weight: var(--font-weight-medium);
+  color: var(--lable-tetriary);
+  background-color: transparent;
+  outline: none;
+  border: none;
+  caret-color: var(--system-link);
+}
+
+.allowedDrop {
+  border-radius: 0;
+  border-bottom: 1px solid var(--system-link);
+}

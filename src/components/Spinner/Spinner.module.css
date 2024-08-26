@@ -1,0 +1,20 @@
+.spinner {
+  margin: 15px auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--gray-7);
+}
+
+.spinner svg {
+  animation: spinner 1.5s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

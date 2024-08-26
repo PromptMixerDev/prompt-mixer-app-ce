@@ -1,0 +1,36 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding: 48px 32px;
+  max-width: 788px;
+  margin: 0 auto;
+}
+
+.title {
+  font-size: 26px;
+  font-weight: var(--font-weight-semibold);
+  line-height: 30px;
+  color: var(--lable-primary);
+}
+
+.error {
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  padding: 32px 40px;
+  text-align: center;
+  color: var(--lable-secondary);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.removeButton {
+  color: var(--lable-danger);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}

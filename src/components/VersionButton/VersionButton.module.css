@@ -1,0 +1,7 @@
+.wrapper {
+  height: 24px;
+}
+.button {
+  padding: 0 6px;
+  color: var(--lable-secondary);
+}

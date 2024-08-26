@@ -1,0 +1,58 @@
+.wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.wrapper:hover {
+  background: var(--system-hover);
+}
+
+.iconWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+}
+
+.icon {
+  width: 20px;
+  height: 20px;
+}
+
+.prompt {
+  background: var(--system-hover);
+}
+
+.prompt > svg {
+  color: var(--lable-secondary);
+}
+
+.output {
+  background: var(--green-2);
+}
+
+.connectors {
+  background: var(--yellow-1);
+}
+
+.connectors > svg {
+  color: var(--yellow-7);
+}
+
+.settings {
+  border: 1px solid var(--system-separator);
+}
+
+.settings > svg {
+  color: var(--lable-secondary);
+}
+
+.dataset {
+  background: var(--purple-1);
+}

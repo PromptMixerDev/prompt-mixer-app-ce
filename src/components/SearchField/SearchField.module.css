@@ -1,0 +1,31 @@
+.searchWrapper {
+  display: flex;
+  align-items: center;
+  border-radius: 4px;
+  background-color: var(--system-hover);
+}
+
+.search {
+  display: flex;
+  width: 100%;
+  padding: 8px 10px;
+  align-items: center;
+  gap: 4px;
+  color: var(--lable-secondary);
+}
+
+.search svg {
+  flex-shrink: 0;
+}
+
+.searchInput {
+  width: 100%;
+  padding: 0;
+  color: var(--lable-primary);
+  font-size: var(--font-size-small);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-base);
+  outline: none;
+  border: none;
+  background-color: transparent;
+}
