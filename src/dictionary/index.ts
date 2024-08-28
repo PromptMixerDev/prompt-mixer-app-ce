@@ -115,6 +115,9 @@ export const DICTIONARY = {
     failedToMovePromptChain: 'Failed to move prompt chain',
     failedToUpdateApp: 'Failed to update application',
     nextLaunchUpdate: 'Application will be updated on next launch',
+    connectorVersionUpdatedSuccessfully:
+      'Connector version updated successfully',
+    failedUpdateConnectorVersion: 'Failed to update connector version',
   },
   outputError: {
     trySteps: 'Please try the following steps to resolve the issue:',

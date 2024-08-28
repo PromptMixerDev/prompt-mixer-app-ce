@@ -7,6 +7,9 @@ import { config } from 'dotenv';
 import pkg from 'electron-updater';
 import firstTimeSetup, { installConnector } from './connectorInstaller.js';
 import { uninstallConnector } from './connectorUninstaller.js';
+import { createRequire } from 'module';
+
+const require = createRequire(import.meta.url);
 
 config();
 const { autoUpdater } = pkg;
@@ -152,8 +155,9 @@ async function getInstalledConnectors() {
         for (const folder of folders) {
             if (await checkMainJsExists(connectorsPath, folder)) {
                 const configPath = path.join(connectorsPath, folder, 'main.js');
-                const configUrl = new URL(`file://${configPath.replace(/\\/g, '/')}`);
-                const configFile = await import(configUrl.href);
+                delete require.cache[require.resolve(configPath)];
+                const configFile = require(configPath);
+
                 if (configFile) {
                     installedConnectors.push({ connectorFolder: folder, ...configFile.config });
                 }
@@ -318,6 +322,17 @@ ipcMain.on('remove-connector', async (event, connectorName) => {
     } catch (error) {
         event.reply('remove-connector-failed', error);
     }
+});
+
+ipcMain.on('update-connector-version', async (event, connector, link) => {
+  console.log('update-connector-version', connector, link);
+  try {
+    await installConnector(connector, link);
+    event.reply('update-connector-version-success');
+  } catch (error) {
+    event.reply('update-connector-version-failed', error);
+  }
+  event.reply('update-connector-version-finish');
 });
 
 app.on('window-all-closed', () => {

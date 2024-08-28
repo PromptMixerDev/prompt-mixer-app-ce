@@ -1,4 +1,4 @@
-import { CONNECTORS_URL } from 'http/endpoints';
+import { CONNECTOR_URL, CONNECTORS_URL } from 'http/endpoints';
 import { httpClient } from 'http/httpClient';
 
 export interface PromptMixerConnector {
@@ -9,6 +9,7 @@ export interface PromptMixerConnector {
   description: string;
   link: string;
   tags: string[] | null;
+  latest_version: string;
 }
 
 export interface ConnectorsResponse {
@@ -29,5 +30,27 @@ export const getConnectors = async (
   } catch (error) {
     console.error('Failed to get connectors:', error);
     throw new Error('Failed to get connectors');
+  }
+};
+
+const getConnectorById = async (id: string): Promise<PromptMixerConnector> => {
+  try {
+    const url = `${CONNECTOR_URL}/${id}`;
+    return await httpClient(url);
+  } catch (error) {
+    console.error('Failed to get connector by id:', error);
+    throw new Error('Failed to get connector by id');
+  }
+};
+
+export const getConnectorsByIds = async (
+  ids: string[]
+): Promise<PromptMixerConnector[]> => {
+  try {
+    const res = await Promise.all(ids.map((id) => getConnectorById(id)));
+    return res;
+  } catch (error) {
+    console.error('Failed to get connectors by ids:', error);
+    throw new Error('Failed to get connectors by ids');
   }
 };

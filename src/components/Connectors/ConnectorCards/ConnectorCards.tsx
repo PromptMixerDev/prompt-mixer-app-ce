@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DICTIONARY } from 'dictionary';
 import { useAppSelector, useAsync } from 'hooks';
-import { type ConnectorsResponse, getConnectors } from 'http/connectors';
+import {
+  type ConnectorsResponse,
+  getConnectors,
+  getConnectorsByIds,
+  PromptMixerConnector,
+} from 'http/connectors';
 import { ConnectorCard } from './ConnectorCard/ConnectorCard';
 import { type IConnector } from '../../ModelsSelector';
 import { ConnectorPage } from '../ConnectorPage';
@@ -21,16 +26,6 @@ interface ConnectorCardsProps {
   setSelectedConnector: (value: IConnector | null) => void;
 }
 
-export interface PromptMixerConnector {
-  slug: string;
-  name: string;
-  developer: string;
-  updated: string;
-  description: string;
-  link: string;
-  tags: string[] | null;
-}
-
 const PAGE_LIMIT = 10;
 
 export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
@@ -41,6 +36,7 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
   setSelectedConnector,
 }) => {
   const { installedConnectors } = useAppSelector((store) => store.connectors);
+  console.log('installedConnectors', installedConnectors);
   const installedConnector =
     selectedConnector &&
     installedConnectors.find(
@@ -54,6 +50,15 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
     ConnectorsResponse,
     [number, number, string]
   >(getConnectors, page, PAGE_LIMIT, searchKey);
+
+  const { data: originInstoledConnectors } = useAsync<
+    PromptMixerConnector[],
+    string[][]
+  >(
+    getConnectorsByIds,
+    installedConnectors.map((el) => el.connectorFolder)
+  );
+
   const hasMore = data?.total_connectors
     ? page * PAGE_LIMIT < data.total_connectors
     : false;
@@ -112,6 +117,9 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
               />
               <div className={styles.cardsWrapper}>
                 {loadedConnectors.map((connector, index) => {
+                  const installedConnector = installedConnectors.find(
+                    (el) => el.connectorFolder === connector.connectorFolder
+                  );
                   return (
                     <ConnectorCard
                       ref={
@@ -122,6 +130,13 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                       key={connector.connectorFolder}
                       connector={connector}
                       setSelectedConnector={setSelectedConnector}
+                      isUpdateAvailable={
+                        !!(
+                          installedConnector &&
+                          connector.connectorVersion !==
+                            installedConnector.connectorVersion
+                        )
+                      }
                     />
                   );
                 })}
@@ -131,13 +146,32 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
           )}
           {activeTab === Tabs.installed && (
             <div className={styles.cardsWrapper}>
-              {installedConnectors.map((connector) => (
-                <ConnectorCard
-                  key={connector.connectorFolder}
-                  connector={connector}
-                  setSelectedConnector={setSelectedConnector}
-                />
-              ))}
+              {mapToConnectors(originInstoledConnectors).map((connector) => {
+                const installedConnector = installedConnectors.find(
+                  (el) => el.connectorFolder === connector.connectorFolder
+                );
+
+                console.log(
+                  'connector.connectorVersion',
+                  connector.connectorVersion
+                );
+                console.log(
+                  'installedConnector.connectorVersion',
+                  installedConnector?.connectorVersion
+                );
+
+                return (
+                  <ConnectorCard
+                    key={connector.connectorFolder}
+                    connector={connector}
+                    setSelectedConnector={setSelectedConnector}
+                    isUpdateAvailable={
+                      connector.connectorVersion !==
+                      installedConnector?.connectorVersion
+                    }
+                  />
+                );
+              })}
             </div>
           )}
         </>
