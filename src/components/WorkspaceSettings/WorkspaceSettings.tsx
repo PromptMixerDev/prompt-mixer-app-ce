@@ -51,16 +51,12 @@ export const WorkspaceSettings: React.FC<WorkspaceSettingsProps> = ({
 
   useEffect(() => {
     setIsLoading(true);
-    console.log(1);
     getWorkspace(commonDb, workspaceId)
       .then((workspace) => {
-        console.log(2);
         setWorkspace(workspace);
-        console.log(3);
         setIsLoading(false);
       })
       .catch((error) => {
-        console.log(4);
         setIsLoading(false);
         setError(true);
         console.error(error);

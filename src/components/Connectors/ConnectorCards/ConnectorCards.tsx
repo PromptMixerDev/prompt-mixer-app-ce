@@ -36,7 +36,6 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
   setSelectedConnector,
 }) => {
   const { installedConnectors } = useAppSelector((store) => store.connectors);
-  console.log('installedConnectors', installedConnectors);
   const installedConnector =
     selectedConnector &&
     installedConnectors.find(
@@ -149,15 +148,6 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
               {mapToConnectors(originInstoledConnectors).map((connector) => {
                 const installedConnector = installedConnectors.find(
                   (el) => el.connectorFolder === connector.connectorFolder
-                );
-
-                console.log(
-                  'connector.connectorVersion',
-                  connector.connectorVersion
-                );
-                console.log(
-                  'installedConnector.connectorVersion',
-                  installedConnector?.connectorVersion
                 );
 
                 return (
