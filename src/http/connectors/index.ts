@@ -33,13 +33,15 @@ export const getConnectors = async (
   }
 };
 
-const getConnectorById = async (id: string): Promise<PromptMixerConnector> => {
+const getConnectorById = async (
+  id: string
+): Promise<PromptMixerConnector | null> => {
   try {
     const url = `${CONNECTOR_URL}/${id}`;
     return await httpClient(url);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (error) {
-    console.error('Failed to get connector by id:', error);
-    throw new Error('Failed to get connector by id');
+    return null;
   }
 };
 
@@ -48,7 +50,7 @@ export const getConnectorsByIds = async (
 ): Promise<PromptMixerConnector[]> => {
   try {
     const res = await Promise.all(ids.map((id) => getConnectorById(id)));
-    return res;
+    return res.filter(Boolean) as PromptMixerConnector[];
   } catch (error) {
     console.error('Failed to get connectors by ids:', error);
     throw new Error('Failed to get connectors by ids');

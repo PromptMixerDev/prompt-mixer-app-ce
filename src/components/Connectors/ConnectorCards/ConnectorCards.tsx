@@ -57,6 +57,9 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
     getConnectorsByIds,
     installedConnectors.map((el) => el.connectorFolder)
   );
+  const mappedOriginInstoledConnectors = mapToConnectors(
+    originInstoledConnectors ?? []
+  );
 
   const hasMore = data?.total_connectors
     ? page * PAGE_LIMIT < data.total_connectors
@@ -145,19 +148,21 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
           )}
           {activeTab === Tabs.installed && (
             <div className={styles.cardsWrapper}>
-              {mapToConnectors(originInstoledConnectors).map((connector) => {
-                const installedConnector = installedConnectors.find(
+              {installedConnectors.map((connector) => {
+                const originConnector = mappedOriginInstoledConnectors.find(
                   (el) => el.connectorFolder === connector.connectorFolder
                 );
-
                 return (
                   <ConnectorCard
                     key={connector.connectorFolder}
-                    connector={connector}
+                    connector={originConnector ?? connector}
                     setSelectedConnector={setSelectedConnector}
                     isUpdateAvailable={
-                      connector.connectorVersion !==
-                      installedConnector?.connectorVersion
+                      !!(
+                        originConnector &&
+                        originConnector?.connectorVersion !==
+                          connector?.connectorVersion
+                      )
                     }
                   />
                 );
