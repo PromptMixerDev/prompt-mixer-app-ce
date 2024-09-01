@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { DICTIONARY } from 'dictionary';
 import { useAppSelector, useAsync } from 'hooks';
-import { type ConnectorsResponse, getConnectors } from 'http/connectors';
+import {
+  type ConnectorsResponse,
+  getConnectors,
+  getConnectorsByIds,
+  PromptMixerConnector,
+} from 'http/connectors';
 import { ConnectorCard } from './ConnectorCard/ConnectorCard';
 import { type IConnector } from '../../ModelsSelector';
 import { ConnectorPage } from '../ConnectorPage';
@@ -19,16 +24,6 @@ interface ConnectorCardsProps {
   setNewConnectorOpened: (value: boolean) => void;
   selectedConnector: IConnector | null;
   setSelectedConnector: (value: IConnector | null) => void;
-}
-
-export interface PromptMixerConnector {
-  slug: string;
-  name: string;
-  developer: string;
-  updated: string;
-  description: string;
-  link: string;
-  tags: string[] | null;
 }
 
 const PAGE_LIMIT = 10;
@@ -54,6 +49,18 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
     ConnectorsResponse,
     [number, number, string]
   >(getConnectors, page, PAGE_LIMIT, searchKey);
+
+  const { data: originInstoledConnectors } = useAsync<
+    PromptMixerConnector[],
+    string[][]
+  >(
+    getConnectorsByIds,
+    installedConnectors.map((el) => el.connectorFolder)
+  );
+  const mappedOriginInstoledConnectors = mapToConnectors(
+    originInstoledConnectors ?? []
+  );
+
   const hasMore = data?.total_connectors
     ? page * PAGE_LIMIT < data.total_connectors
     : false;
@@ -112,6 +119,9 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
               />
               <div className={styles.cardsWrapper}>
                 {loadedConnectors.map((connector, index) => {
+                  const installedConnector = installedConnectors.find(
+                    (el) => el.connectorFolder === connector.connectorFolder
+                  );
                   return (
                     <ConnectorCard
                       ref={
@@ -122,6 +132,13 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                       key={connector.connectorFolder}
                       connector={connector}
                       setSelectedConnector={setSelectedConnector}
+                      isUpdateAvailable={
+                        !!(
+                          installedConnector &&
+                          connector.connectorVersion !==
+                            installedConnector.connectorVersion
+                        )
+                      }
                     />
                   );
                 })}
@@ -131,13 +148,25 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
           )}
           {activeTab === Tabs.installed && (
             <div className={styles.cardsWrapper}>
-              {installedConnectors.map((connector) => (
-                <ConnectorCard
-                  key={connector.connectorFolder}
-                  connector={connector}
-                  setSelectedConnector={setSelectedConnector}
-                />
-              ))}
+              {installedConnectors.map((connector) => {
+                const originConnector = mappedOriginInstoledConnectors.find(
+                  (el) => el.connectorFolder === connector.connectorFolder
+                );
+                return (
+                  <ConnectorCard
+                    key={connector.connectorFolder}
+                    connector={originConnector ?? connector}
+                    setSelectedConnector={setSelectedConnector}
+                    isUpdateAvailable={
+                      !!(
+                        originConnector &&
+                        originConnector?.connectorVersion !==
+                          connector?.connectorVersion
+                      )
+                    }
+                  />
+                );
+              })}
             </div>
           )}
         </>

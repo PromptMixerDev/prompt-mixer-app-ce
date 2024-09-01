@@ -16,7 +16,18 @@
 }
 
 .main {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
   min-height: 48px;
+}
+
+.connectorInfo {
+  overflow: hidden;
+}
+
+.updateButton {
+  flex-shrink: 0;
 }
 
 .title {
@@ -50,4 +61,17 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.rotateIcon {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

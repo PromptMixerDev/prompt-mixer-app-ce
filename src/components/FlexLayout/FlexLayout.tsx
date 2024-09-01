@@ -134,6 +134,23 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
       'update-connector-success': (value: IConnector) => {
         dispatch(updateConnector(value));
       },
+      'update-connector-version-success': () => {
+        getAllSavedSettings(db)
+          .then((res) => send('request-installed-connectors', res))
+          .catch(console.error);
+
+        addNotification(
+          NotificationTypes.success,
+          DICTIONARY.notifications.connectorVersionUpdatedSuccessfully
+        );
+      },
+      'update-connector-version-failed': (error: any) => {
+        console.error(error);
+        addNotification(
+          NotificationTypes.error,
+          DICTIONARY.notifications.failedUpdateConnectorVersion
+        );
+      },
     },
     [db]
   );

@@ -19,6 +19,7 @@ export interface ConnectorParameter {
 export interface IConnector {
   connectorFolder: string;
   connectorName: string;
+  connectorVersion: string;
   models: string[];
   settings: ConnectorParameter[];
   iconBase64?: string;

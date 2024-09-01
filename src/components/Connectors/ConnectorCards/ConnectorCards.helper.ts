@@ -1,5 +1,5 @@
+import { PromptMixerConnector } from 'http/connectors';
 import { type IConnector } from '../../ModelsSelector';
-import { type PromptMixerConnector } from './ConnectorCards';
 
 export const mapToConnectors = (
   data: PromptMixerConnector[] | null
@@ -18,5 +18,6 @@ export const mapToConnectors = (
     updated: item.updated,
     link: item.link,
     tags: item.tags,
+    connectorVersion: item.latest_version,
   }));
 };

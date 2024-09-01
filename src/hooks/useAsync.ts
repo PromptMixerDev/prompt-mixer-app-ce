@@ -26,7 +26,7 @@ export const useAsync = <T, Args extends any[]>(
     } catch (error) {
       setState({ data: null, error: error as Error, isLoading: false });
     }
-  }, [memoizedOperation, ...args]);
+  }, [memoizedOperation, JSON.stringify(args)]);
 
   useEffect(() => {
     void fetchData();
