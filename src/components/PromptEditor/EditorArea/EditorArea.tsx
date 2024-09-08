@@ -32,6 +32,7 @@ import {
 import { PromptItemInfo } from '../PromptItemInfo';
 import { ContextMenuWithOptions } from '../../Modals/ContextMenuWithOptions';
 import { AlignValues, type ClientRect } from '../../Modals/ContextMenu';
+import { Spinner } from '../../Spinner';
 import styles from './EditorArea.module.css';
 import './EditorArea.custom.css';
 
@@ -102,6 +103,8 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
       }
     >
   >({});
+  const isLoaded =
+    (promptItems.length && !!Object.keys(promptItemsMap).length) ?? true;
 
   const handlePromptItemsPosition = (): void =>
     updatePromptItemsPosition(
@@ -210,22 +213,26 @@ export const EditorArea: React.FC<EditorAreaProps> = ({
   return (
     <div id={tabId} className={styles.wrapper} ref={editorRef}>
       <div className={styles.editor}>
-        <Editor
-          placeholder={
-            isDefaultPrompt ? DICTIONARY.placeholders.enterPrompt : undefined
-          }
-          editorState={editorState}
-          onChange={handleEditorChange}
-          handleBeforeInput={beforeInputHandler(
-            setEditorState,
-            setShowPopup,
-            setSelectionRect,
-            setDatasetMetadata
-          )}
-          stripPastedStyles={true}
-          keyBindingFn={keyBindingFn}
-          handleKeyCommand={handleKeyCommand}
-        />
+        {!isLoaded ? (
+          <Spinner />
+        ) : (
+          <Editor
+            placeholder={
+              isDefaultPrompt ? DICTIONARY.placeholders.enterPrompt : undefined
+            }
+            editorState={editorState}
+            onChange={handleEditorChange}
+            handleBeforeInput={beforeInputHandler(
+              setEditorState,
+              setShowPopup,
+              setSelectionRect,
+              setDatasetMetadata
+            )}
+            stripPastedStyles={true}
+            keyBindingFn={keyBindingFn}
+            handleKeyCommand={handleKeyCommand}
+          />
+        )}
       </div>
       {promptItems.map((promptItem, ind) => {
         const position = promptItemsPosition[promptItem.PromptID];
