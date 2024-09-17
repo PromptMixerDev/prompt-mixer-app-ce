@@ -4,8 +4,7 @@
  */
 export default async (tabName: string): Promise<void> => {
   // Selector for the tab with the given name
-  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button') and .//div[contains(@class, 'flexlayout__tab_button_content') and text()='${tabName}']]`;
-
+  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button')]//div[contains(text(), '${tabName}')]`;
   // Find the tab
   const tab = await browser.$(tabSelector);
   if (!tab) {
@@ -13,8 +12,7 @@ export default async (tabName: string): Promise<void> => {
   }
 
   // Revised selector for the close button specific to this tab
-  const closeButtonSelector =
-    './/div[contains(@data-layout-path, "/button/close")]';
+  const closeButtonSelector = `./parent::*/following-sibling::div[@data-layout-path[contains(., '/button/close')]]`;
 
   // Find the close button within this tab
   const closeButton = await tab.$(closeButtonSelector);

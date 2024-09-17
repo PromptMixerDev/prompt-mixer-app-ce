@@ -7,7 +7,7 @@ export default async (
   expectedCount: string,
   tabName: string
 ): Promise<void> => {
-  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button') and .//div[contains(@class, 'flexlayout__tab_button_content') and text()="${tabName}"]]`;
+  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button')]//div[contains(text(), '${tabName}')]`;
 
   const tabs = await browser.$$(tabSelector);
   const actualCount = tabs.length;

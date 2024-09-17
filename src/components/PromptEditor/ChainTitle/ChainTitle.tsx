@@ -85,5 +85,11 @@ export const ChainTitle: React.FC<ChainTitleProps> = ({
     }
   };
 
-  return <Title entityId={chainId} handleTitleBlur={handleTitleBlur} />;
+  return (
+    <Title
+      entityId={chainId}
+      handleTitleBlur={handleTitleBlur}
+      id="chain-title-input"
+    />
+  );
 };
