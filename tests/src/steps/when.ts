@@ -18,6 +18,7 @@ import setInputField from '../support/action/setInputField.js';
 import addMultilineInputField from '../support/action/addMultilineInputField.js';
 import setPromptText from '../support/action/setPromptText.js';
 import switchIFrame from '../support/action/switchIFrame.js';
+import setEnvVar from '../support/action/setEnvVar.js';
 
 When(
   /^I (click|doubleclick) on the (link|button|element) "([^"]*)?"$/,
@@ -25,6 +26,8 @@ When(
 );
 
 When(/^I (add|set) "([^"]*)?" to the inputfield "([^"]*)?"$/, setInputField);
+
+When(/^I set "([^"]*)?" environment variable to the inputfield "([^"]*)?"$/, setEnvVar);
 
 When(
   /^I add multiline text "([^"]*)?" to the inputfield "([^"]*)?"$/,

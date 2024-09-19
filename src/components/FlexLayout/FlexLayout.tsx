@@ -61,6 +61,7 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
   const db = useContext(WorkspaceDatabaseContext)!;
   const sideBarRef = useRef<HTMLDivElement | null>(null);
   const [sideBarReady, setSideBarReady] = useState(false);
+  const [setupComplete, setSetupComplete] = useState(false);
   const { addNotification } = useContext(NotificationsContext)!;
   const dispatch = useAppDispatch();
   const { model: flexLayoutModel } = useAppSelector(
@@ -151,6 +152,7 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
           DICTIONARY.notifications.failedUpdateConnectorVersion
         );
       },
+      'setup-complete': () => setSetupComplete(true),
     },
     [db]
   );
@@ -160,12 +162,17 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
       handleStuckOutputs(db).catch((error) => {
         console.error(error);
       });
+    }
+  }, [db]);
+
+  useEffect(() => {
+    if (db) {
       getAllSavedSettings(db)
         .then((res) => send('request-installed-connectors', res))
         .catch(console.error);
       readAndSetDatasets(db, dispatch);
     }
-  }, [db]);
+  }, [db, setupComplete]);
 
   const factory = (node: TabNode): React.ReactNode => {
     const config = node.getConfig();

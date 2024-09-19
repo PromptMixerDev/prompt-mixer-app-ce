@@ -150,6 +150,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
     <div>
       <div className={styles.header}>
         <Button
+          id="run-button"
           type={ButtonTypes.iconText}
           color={ButtonColor.success}
           size={ButtonSize.m}
