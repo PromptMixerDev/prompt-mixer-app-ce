@@ -44,6 +44,7 @@ export const ConnectorTabs: React.FC<ConnectorTabsProps> = ({
         <span>{DICTIONARY.labels.allConnectors}</span>
       </Button>
       <Button
+        id="installed-tab"
         buttonClass={classnames(
           styles.tabButton,
           activeTab !== Tabs.installed && styles.inactive

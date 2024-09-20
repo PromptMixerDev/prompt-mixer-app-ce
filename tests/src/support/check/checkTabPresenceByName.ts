@@ -3,7 +3,7 @@
  * @param {String} tabName The name of the tab to check.
  */
 export default async (tabName: string): Promise<void> => {
-  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button') and //div[contains(@class, 'flexlayout__tab_button_content') and text()='${tabName}']]`;
+  const tabSelector = `//div[contains(@class, 'flexlayout__tab_button')]//div[contains(text(), '${tabName}')]`;
 
   await browser.waitUntil(
     async () => {

@@ -8,9 +8,14 @@ import styles from './Title.module.css';
 interface TitleProps {
   entityId?: string;
   handleTitleBlur: (title: string) => void;
+  id?: string;
 }
 
-export const Title: React.FC<TitleProps> = ({ entityId, handleTitleBlur }) => {
+export const Title: React.FC<TitleProps> = ({
+  entityId,
+  handleTitleBlur,
+  id,
+}) => {
   const entityInfo = useAppSelector(selectTreeItemById(entityId));
   const [title, setTitle] = useState<string>('');
 
@@ -34,7 +39,7 @@ export const Title: React.FC<TitleProps> = ({ entityId, handleTitleBlur }) => {
 
   return (
     <Textarea
-      id="title-input"
+      id={id ?? 'title-input'}
       value={title}
       onChange={handleTitleChange}
       onBlur={() => handleTitleBlur(title)}
