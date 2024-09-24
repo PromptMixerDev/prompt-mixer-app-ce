@@ -52,6 +52,7 @@ export const InstallConnectorPage: React.FC<InstallConnectorPageProps> = ({
         <div className={styles.description}>{connector.description}</div>
       </div>
       <Button
+        id="install-btn"
         size={ButtonSize.m}
         type={ButtonTypes.text}
         color={ButtonColor.link}

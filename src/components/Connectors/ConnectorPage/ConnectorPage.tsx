@@ -91,6 +91,7 @@ export const ConnectorPage: React.FC<ConnectorPageProps> = ({
         <div className={styles.removeZone}>
           <div className={styles.label}>{DICTIONARY.labels.dangerZone}</div>
           <Button
+            id="remove-connector"
             type={ButtonTypes.text}
             color={ButtonColor.danger}
             onClick={() => setShowConfirmModal(true)}
