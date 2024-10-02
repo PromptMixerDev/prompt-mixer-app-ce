@@ -1,0 +1,27 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 6px;
+  gap: 6px;
+  height: 40px;
+}
+
+.button {
+  border: 1px solid var(--system-separator);
+}
+
+.clearButton {
+  margin-left: auto;
+}
+
+.search {
+  background-color: transparent;
+  border: 1px solid var(--system-separator);
+  width: 224px;
+}
+
+.search > div {
+  padding: 4px 10px;
+}
+

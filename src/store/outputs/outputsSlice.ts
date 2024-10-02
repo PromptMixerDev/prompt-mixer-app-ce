@@ -5,12 +5,21 @@ export interface OutputType extends Output {
   activeStep: number;
 }
 
+interface OutputFilters {
+  model: { name: string; checked: false }[] | null;
+  rating: { name: string; checked: false }[] | null;
+  search: string | null;
+}
 interface OutputsState {
   outputs: Record<string, OutputType[]>;
+  filters: Record<string, OutputFilters[]>;
+  modelLists: Record<string, string[]>;
 }
 
 const initialState: OutputsState = {
   outputs: {},
+  filters: {},
+  modelLists: {},
 };
 
 const outputsSlice = createSlice({

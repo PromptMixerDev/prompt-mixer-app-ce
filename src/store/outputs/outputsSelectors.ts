@@ -14,3 +14,17 @@ export const selectOutputsByChainId = (
     }
     return [];
   });
+
+export const selectOutputModelsByChainId = (
+  chainId: string | undefined
+): ((state: RootState) => string[]) =>
+  createSelector([selectOutputs], (outputs: Record<string, OutputType[]>) => {
+    if (chainId) {
+      return Array.from(
+        new Set(
+          (outputs[chainId] || []).map((output) => output.ModelType || '')
+        )
+      );
+    }
+    return [];
+  });

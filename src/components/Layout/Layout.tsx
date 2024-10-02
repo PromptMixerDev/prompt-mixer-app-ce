@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
 import {
   List,
   AutoSizer,
@@ -18,7 +20,10 @@ import { ReactComponent as FilterIcon } from 'assets/icons/filter.svg';
 import { ReactComponent as StarsIcon } from 'assets/icons/stars.svg';
 import { DICTIONARY } from 'dictionary';
 import { useAppDispatch, useAppSelector, useResizeObserver } from 'hooks';
-import { selectOutputsByChainId } from 'store/outputs/outputsSelectors';
+import {
+  selectOutputsByChainId,
+  selectOutputModelsByChainId,
+} from 'store/outputs/outputsSelectors';
 import { EntityType } from 'store/selectedEntity/selectedEntitySlice';
 import { selectWorkflowOutputsByWorkflowId } from 'store/workflowOutputs/workflowOutputsSelectors';
 import { ContextMenuWithOptions } from '../Modals/ContextMenuWithOptions';
@@ -29,6 +34,7 @@ import {
   readAndSetWorkflowOutputs,
 } from './Layout.helper';
 import { Button, ButtonSize, ButtonTypes } from '../Button';
+import { OutputFilter } from './OutputFilter';
 import { Output } from './Output';
 import styles from './Layout.module.css';
 
@@ -44,10 +50,14 @@ export const Layout: React.FC = () => {
     (state) => state.selectedEntity
   );
   const chainOutputs = useAppSelector(selectOutputsByChainId(selectedEntityId));
+  const chainModels = useAppSelector(
+    selectOutputModelsByChainId(selectedEntityId)
+  );
   const workflowOutputs = useAppSelector(
     selectWorkflowOutputsByWorkflowId(selectedEntityId)
   );
   const [dotMenuVisible, setDotMenuVisible] = useState(false);
+  const [showOutputFiler, setShowOutputFiler] = useState(true);
   const isChain = selectedEntityType === EntityType.promptChain;
 
   const readOutputsFunction = isChain
@@ -121,7 +131,7 @@ export const Layout: React.FC = () => {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <Button type={ButtonTypes.icon} size={ButtonSize.m} onClick={() => {}}>
-          <FilterIcon />
+          <FilterIcon onClick={() => setShowOutputFiler(!showOutputFiler)} />
         </Button>
         <Button
           ref={dotButtonRef}
@@ -132,6 +142,9 @@ export const Layout: React.FC = () => {
           <MoreIcon />
         </Button>
       </div>
+      {isChain && showOutputFiler && (
+        <OutputFilter models={chainModels} isDisabled={!chainModels.length} />
+      )}
       {dotMenuVisible && (
         <ContextMenuWithOptions
           optionGroups={getDotMenuOptions(
@@ -146,7 +159,13 @@ export const Layout: React.FC = () => {
           align={AlignValues.UNDER_CENTER}
         />
       )}
-      <div className={styles.content} ref={listRef}>
+      <div
+        className={classnames(
+          styles.content,
+          showOutputFiler && styles.withFilter
+        )}
+        ref={listRef}
+      >
         {!selectedEntityId || !outputs.length ? (
           <div className={styles.placeholder}>
             <StarsIcon />
