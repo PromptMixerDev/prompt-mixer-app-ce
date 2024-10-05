@@ -5,6 +5,8 @@
   padding: 0 6px;
   gap: 6px;
   height: 40px;
+  overflow: hidden;
+  overflow-x: scroll;
 }
 
 .button {
@@ -18,10 +20,28 @@
 .search {
   background-color: transparent;
   border: 1px solid var(--system-separator);
-  width: 224px;
+  max-width: 224px;
+  min-width: 80px
 }
 
-.search > div {
+.search {
+  padding-right: 2px;
+}
+
+.search > div:first-child {
   padding: 4px 10px;
 }
 
+
+.search > div:nth-child(2) > button {
+  width: 20px;
+  height: 20px;
+}
+
+.filterValue {
+  width: 90px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: start;
+}

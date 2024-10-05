@@ -1,32 +1,18 @@
-import { DICTIONARY } from 'dictionary';
 import { ContextMenuWithCheckboxesOption } from '../../Modals/ContextMenuWithCheckboxes';
+import { FilterItem, FilterType } from 'store/outputs/outputsSlice';
 
-export const getModelOptions = (
-  models: string[],
-  onClick: () => void
+export const getOptions = (
+  items: FilterItem[] | undefined,
+  handleUpdateFilterOption: (
+    filterType: FilterType,
+    optionName: string
+  ) => void,
+  filterType: FilterType
 ): ContextMenuWithCheckboxesOption[] =>
-  models.map((model) => ({
-    label: model,
-    checked: true,
-    onClick,
-  }));
-
-export const getRatingOptions = (
-  onClick: () => void
-): ContextMenuWithCheckboxesOption[] => [
-  {
-    label: DICTIONARY.labels.nice,
-    checked: true,
-    onClick,
-  },
-  {
-    label: DICTIONARY.labels.neutral,
-    checked: true,
-    onClick,
-  },
-  {
-    label: DICTIONARY.labels.dislike,
-    checked: true,
-    onClick,
-  },
-];
+  items?.map((item) => ({
+    label: item.name,
+    checked: item.checked,
+    onClick: () => {
+      handleUpdateFilterOption(filterType, item.name);
+    },
+  })) ?? [];

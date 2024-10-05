@@ -5,14 +5,30 @@ export interface OutputType extends Output {
   activeStep: number;
 }
 
-interface OutputFilters {
-  model: { name: string; checked: false }[] | null;
-  rating: { name: string; checked: false }[] | null;
+export enum OutputRating {
+  Nice = 'Nice',
+  Neutral = 'Neutral',
+  Dislike = 'Dislike',
+}
+
+export enum FilterType {
+  model = 'model',
+  rating = 'rating',
+}
+
+export interface FilterItem {
+  name: string;
+  checked: boolean;
+}
+
+export interface OutputFilters {
+  model: FilterItem[];
+  rating: FilterItem[];
   search: string | null;
 }
 interface OutputsState {
   outputs: Record<string, OutputType[]>;
-  filters: Record<string, OutputFilters[]>;
+  filters: Record<string, OutputFilters>;
   modelLists: Record<string, string[]>;
 }
 
@@ -87,6 +103,73 @@ const outputsSlice = createSlice({
         );
       }
     },
+    updateOutputFilters(
+      state,
+      action: PayloadAction<{ chainId: string; outputs: Output[] }>
+    ) {
+      const { chainId, outputs } = action.payload;
+      const modelTypes = [
+        ...new Set(outputs.map((output) => output.ModelType)),
+      ];
+
+      if (!state.filters[chainId]) {
+        state.filters[chainId] = {
+          model: modelTypes.map((model) => ({ name: model, checked: false })),
+          rating: [
+            { name: OutputRating.Nice, checked: false },
+            { name: OutputRating.Neutral, checked: false },
+            { name: OutputRating.Dislike, checked: false },
+          ],
+          search: null,
+        };
+      }
+    },
+    updateFilterOption(
+      state,
+      action: PayloadAction<{
+        chainId: string;
+        filterType: FilterType;
+        optionName: string;
+      }>
+    ) {
+      const { chainId, filterType, optionName } = action.payload;
+      const filters = state.filters[chainId];
+      if (filters) {
+        const filterArray = filters[filterType];
+        const filterItem = filterArray.find((item) => item.name === optionName);
+        if (filterItem) {
+          filterItem.checked = !filterItem.checked;
+        }
+      }
+    },
+    updateSearchFilter(
+      state,
+      action: PayloadAction<{
+        chainId: string;
+        searchKey: string | null;
+      }>
+    ) {
+      const { chainId, searchKey } = action.payload;
+      if (state.filters[chainId]) {
+        state.filters[chainId].search = searchKey;
+      }
+    },
+    clearFilters(state, action: PayloadAction<{ chainId: string }>) {
+      const { chainId } = action.payload;
+      if (state.filters[chainId]) {
+        state.filters[chainId] = {
+          model: state.filters[chainId].model.map((item) => ({
+            ...item,
+            checked: false,
+          })),
+          rating: state.filters[chainId].rating.map((item) => ({
+            ...item,
+            checked: false,
+          })),
+          search: null,
+        };
+      }
+    },
     resetOutputState() {
       return initialState;
     },
@@ -98,6 +181,10 @@ export const {
   updateOutput,
   deleteOutput,
   setOutputs,
+  updateOutputFilters,
+  updateFilterOption,
+  updateSearchFilter,
+  clearFilters,
   resetOutputState,
 } = outputsSlice.actions;
 export default outputsSlice.reducer;

@@ -22,7 +22,8 @@ import { DICTIONARY } from 'dictionary';
 import { useAppDispatch, useAppSelector, useResizeObserver } from 'hooks';
 import {
   selectOutputsByChainId,
-  selectOutputModelsByChainId,
+  selectOutputFiltersByChainId,
+  selectFilteredOutputsByChainId,
 } from 'store/outputs/outputsSelectors';
 import { EntityType } from 'store/selectedEntity/selectedEntitySlice';
 import { selectWorkflowOutputsByWorkflowId } from 'store/workflowOutputs/workflowOutputsSelectors';
@@ -50,14 +51,18 @@ export const Layout: React.FC = () => {
     (state) => state.selectedEntity
   );
   const chainOutputs = useAppSelector(selectOutputsByChainId(selectedEntityId));
-  const chainModels = useAppSelector(
-    selectOutputModelsByChainId(selectedEntityId)
+  const filteredChainOutputs = useAppSelector(
+    selectFilteredOutputsByChainId(selectedEntityId)
   );
+  const chainFilters = useAppSelector(
+    selectOutputFiltersByChainId(selectedEntityId)
+  );
+
   const workflowOutputs = useAppSelector(
     selectWorkflowOutputsByWorkflowId(selectedEntityId)
   );
   const [dotMenuVisible, setDotMenuVisible] = useState(false);
-  const [showOutputFiler, setShowOutputFiler] = useState(true);
+  const [showOutputFiler, setShowOutputFiler] = useState(false);
   const isChain = selectedEntityType === EntityType.promptChain;
 
   const readOutputsFunction = isChain
@@ -67,7 +72,7 @@ export const Layout: React.FC = () => {
   const deleteAllOutputsFn = isChain
     ? deleteAllOutputs
     : deleteAllWorkflowOutputs;
-  const outputs = isChain ? chainOutputs : workflowOutputs;
+  const outputs = isChain ? filteredChainOutputs : workflowOutputs;
 
   const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -143,7 +148,11 @@ export const Layout: React.FC = () => {
         </Button>
       </div>
       {isChain && showOutputFiler && (
-        <OutputFilter models={chainModels} isDisabled={!chainModels.length} />
+        <OutputFilter
+          filters={chainFilters}
+          isDisabled={!chainOutputs.length}
+          chainId={selectedEntityId}
+        />
       )}
       {dotMenuVisible && (
         <ContextMenuWithOptions

@@ -1,21 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { DICTIONARY } from 'dictionary';
+import { useAppDispatch } from 'hooks';
+import {
+  clearFilters,
+  FilterType,
+  OutputFilters,
+  updateFilterOption,
+  updateSearchFilter,
+} from 'store/outputs/outputsSlice';
+
 import { Button, ButtonTypes } from 'components/Button';
 import { SearchField } from 'components/SearchField';
 import { ContextMenuWithCheckboxes } from 'components/Modals/ContextMenuWithCheckboxes';
 import { AlignValues } from 'components/Modals/ContextMenu';
-import { getModelOptions, getRatingOptions } from './OutputFilter.helper';
+import { getOptions } from './OutputFilter.helper';
 import styles from './OutputFilter.module.css';
 
 interface OutputFilterProps {
-  models: string[];
+  chainId?: string;
+  filters: OutputFilters | null;
   isDisabled: boolean;
 }
 
 export const OutputFilter: React.FC<OutputFilterProps> = ({
-  models,
+  chainId,
+  filters,
   isDisabled,
 }) => {
+  const dispatch = useAppDispatch();
   const modelsFilterRef = useRef<HTMLDivElement | null>(null);
   const ratingFilterRef = useRef<HTMLDivElement | null>(null);
   const [modelFilterValue, setModelFilterValue] = useState(
@@ -27,10 +39,51 @@ export const OutputFilter: React.FC<OutputFilterProps> = ({
   const [openModelFilter, setOpenModelFilter] = useState(false);
   const [openRatingFilter, setOpenRatingFilter] = useState(false);
 
-  console.log(setModelFilterValue, setRatingFilterValue);
+  useEffect(() => {
+    const checkedModelFilters =
+      filters?.model.filter((item) => item.checked) ?? [];
+    if (!checkedModelFilters.length) {
+      setModelFilterValue(DICTIONARY.labels.allModels);
+    } else {
+      setModelFilterValue(
+        checkedModelFilters.map((item) => item.name).join(',')
+      );
+    }
+
+    const checkedRatingFilters =
+      filters?.rating.filter((item) => item.checked) ?? [];
+    if (!checkedRatingFilters.length) {
+      setRatingFilterValue(DICTIONARY.labels.allRating);
+    } else {
+      setRatingFilterValue(
+        checkedRatingFilters.map((item) => item.name).join(', ')
+      );
+    }
+  }, [filters]);
+
+  const handleUpdateFilterOption = (
+    filterType: FilterType,
+    optionName: string
+  ) => {
+    dispatch(
+      updateFilterOption({
+        chainId: chainId!,
+        filterType,
+        optionName,
+      })
+    );
+  };
+
+  const handleSearch = (key: string) => {
+    dispatch(updateSearchFilter({ chainId: chainId!, searchKey: key }));
+  };
+
+  const handleClearFilters = () => {
+    dispatch(clearFilters({ chainId: chainId! }));
+  };
 
   return (
-    <>
+    <div className={styles.container}>
       <div className={styles.wrapper}>
         <Button
           ref={modelsFilterRef}
@@ -41,7 +94,7 @@ export const OutputFilter: React.FC<OutputFilterProps> = ({
           }}
           disabled={isDisabled}
         >
-          <span>{modelFilterValue}</span>
+          <div className={styles.filterValue}>{modelFilterValue}</div>
         </Button>
         <Button
           ref={ratingFilterRef}
@@ -52,40 +105,49 @@ export const OutputFilter: React.FC<OutputFilterProps> = ({
           }}
           disabled={isDisabled}
         >
-          <span>{ratingFilterValue}</span>
+          <div className={styles.filterValue}>{ratingFilterValue}</div>
         </Button>
         <SearchField
-          onSearch={() => {}}
+          onSearch={handleSearch}
           searchFieldClass={styles.search}
           placeholder={DICTIONARY.placeholders.searchOrTextExpression}
+          externalSeachKey={filters?.search ?? ''}
         />
         <Button
           type={ButtonTypes.text}
           buttonWrapperClass={styles.clearButton}
-          onClick={() => {}}
+          onClick={handleClearFilters}
           disabled={isDisabled}
         >
-          <span>{DICTIONARY.labels.clearFilters}</span>
+          {DICTIONARY.labels.clearFilters}
         </Button>
       </div>
-      {openModelFilter && (
+      {!isDisabled && openModelFilter && (
         <ContextMenuWithCheckboxes
-          options={getModelOptions(models, () => {})}
+          options={getOptions(
+            filters?.model,
+            handleUpdateFilterOption,
+            FilterType.model
+          )}
           onClose={() => setOpenModelFilter(false)}
           ignoreElementRef={modelsFilterRef}
           triggerRef={modelsFilterRef}
           align={AlignValues.UNDER}
         />
       )}
-      {openRatingFilter && (
+      {!isDisabled && openRatingFilter && (
         <ContextMenuWithCheckboxes
-          options={getRatingOptions(() => {})}
+          options={getOptions(
+            filters?.rating,
+            handleUpdateFilterOption,
+            FilterType.rating
+          )}
           onClose={() => setOpenRatingFilter(false)}
           ignoreElementRef={ratingFilterRef}
           triggerRef={ratingFilterRef}
           align={AlignValues.UNDER}
         />
       )}
-    </>
+    </div>
   );
 };
