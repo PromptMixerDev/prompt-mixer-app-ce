@@ -105,11 +105,12 @@ const outputsSlice = createSlice({
     },
     updateOutputFilters(
       state,
-      action: PayloadAction<{ chainId: string; outputs: Output[] }>
+      action: PayloadAction<{ chainId: string; outputs?: Output[] }>
     ) {
       const { chainId, outputs } = action.payload;
+      const currentOutputs = outputs || state.outputs[chainId] || [];
       const modelTypes = [
-        ...new Set(outputs.map((output) => output.ModelType)),
+        ...new Set(currentOutputs.map((output) => output.ModelType)),
       ];
 
       if (!state.filters[chainId]) {
@@ -123,6 +124,18 @@ const outputsSlice = createSlice({
           search: null,
         };
       }
+
+      const existingModelFilters = state.filters[chainId].model;
+
+      modelTypes.forEach((modelType) => {
+        if (!existingModelFilters.some((filter) => filter.name === modelType)) {
+          existingModelFilters.push({ name: modelType, checked: false });
+        }
+      });
+
+      state.filters[chainId].model = existingModelFilters.filter((filter) =>
+        modelTypes.includes(filter.name)
+      );
     },
     updateFilterOption(
       state,
