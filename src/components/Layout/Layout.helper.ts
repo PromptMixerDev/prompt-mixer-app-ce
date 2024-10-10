@@ -9,7 +9,11 @@ import {
   type WorkflowOutput,
 } from 'db/workspaceDb';
 import { type AppDispatch } from 'store/store';
-import { type OutputType, setOutputs } from 'store/outputs/outputsSlice';
+import {
+  type OutputType,
+  setOutputs,
+  updateOutputFilters,
+} from 'store/outputs/outputsSlice';
 import {
   type WorkflowOutputType,
   setWorkflowOutputs,
@@ -77,6 +81,7 @@ export const readAndSetOutputs = (
   getOutputsByChainId(db, selectedEntityId)
     .then((outputs: Output[]) => {
       dispatch(setOutputs({ chainId: selectedEntityId, outputs }));
+      dispatch(updateOutputFilters({ chainId: selectedEntityId, outputs }));
     })
     .catch((error) => {
       console.error(error);

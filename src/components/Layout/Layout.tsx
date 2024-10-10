@@ -1,4 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import React, { useContext, useEffect, useRef, useState } from 'react';
+import classnames from 'classnames';
 import {
   List,
   AutoSizer,
@@ -18,7 +20,11 @@ import { ReactComponent as FilterIcon } from 'assets/icons/filter.svg';
 import { ReactComponent as StarsIcon } from 'assets/icons/stars.svg';
 import { DICTIONARY } from 'dictionary';
 import { useAppDispatch, useAppSelector, useResizeObserver } from 'hooks';
-import { selectOutputsByChainId } from 'store/outputs/outputsSelectors';
+import {
+  selectOutputsByChainId,
+  selectOutputFiltersByChainId,
+  selectFilteredOutputsByChainId,
+} from 'store/outputs/outputsSelectors';
 import { EntityType } from 'store/selectedEntity/selectedEntitySlice';
 import { selectWorkflowOutputsByWorkflowId } from 'store/workflowOutputs/workflowOutputsSelectors';
 import { ContextMenuWithOptions } from '../Modals/ContextMenuWithOptions';
@@ -29,6 +35,7 @@ import {
   readAndSetWorkflowOutputs,
 } from './Layout.helper';
 import { Button, ButtonSize, ButtonTypes } from '../Button';
+import { OutputFilter } from './OutputFilter';
 import { Output } from './Output';
 import styles from './Layout.module.css';
 
@@ -44,10 +51,18 @@ export const Layout: React.FC = () => {
     (state) => state.selectedEntity
   );
   const chainOutputs = useAppSelector(selectOutputsByChainId(selectedEntityId));
+  const filteredChainOutputs = useAppSelector(
+    selectFilteredOutputsByChainId(selectedEntityId)
+  );
+  const chainFilters = useAppSelector(
+    selectOutputFiltersByChainId(selectedEntityId)
+  );
+
   const workflowOutputs = useAppSelector(
     selectWorkflowOutputsByWorkflowId(selectedEntityId)
   );
   const [dotMenuVisible, setDotMenuVisible] = useState(false);
+  const [showOutputFiler, setShowOutputFiler] = useState(false);
   const isChain = selectedEntityType === EntityType.promptChain;
 
   const readOutputsFunction = isChain
@@ -57,7 +72,7 @@ export const Layout: React.FC = () => {
   const deleteAllOutputsFn = isChain
     ? deleteAllOutputs
     : deleteAllWorkflowOutputs;
-  const outputs = isChain ? chainOutputs : workflowOutputs;
+  const outputs = isChain ? filteredChainOutputs : workflowOutputs;
 
   const cache = new CellMeasurerCache({
     fixedWidth: true,
@@ -121,7 +136,7 @@ export const Layout: React.FC = () => {
     <div className={styles.wrapper}>
       <div className={styles.header}>
         <Button type={ButtonTypes.icon} size={ButtonSize.m} onClick={() => {}}>
-          <FilterIcon />
+          <FilterIcon onClick={() => setShowOutputFiler(!showOutputFiler)} />
         </Button>
         <Button
           ref={dotButtonRef}
@@ -132,6 +147,13 @@ export const Layout: React.FC = () => {
           <MoreIcon />
         </Button>
       </div>
+      {isChain && showOutputFiler && (
+        <OutputFilter
+          filters={chainFilters}
+          isDisabled={!chainOutputs.length}
+          chainId={selectedEntityId}
+        />
+      )}
       {dotMenuVisible && (
         <ContextMenuWithOptions
           optionGroups={getDotMenuOptions(
@@ -146,7 +168,13 @@ export const Layout: React.FC = () => {
           align={AlignValues.UNDER_CENTER}
         />
       )}
-      <div className={styles.content} ref={listRef}>
+      <div
+        className={classnames(
+          styles.content,
+          showOutputFiler && styles.withFilter
+        )}
+        ref={listRef}
+      >
         {!selectedEntityId || !outputs.length ? (
           <div className={styles.placeholder}>
             <StarsIcon />

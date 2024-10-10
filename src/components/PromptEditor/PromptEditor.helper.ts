@@ -27,7 +27,7 @@ import {
   addRunningModel,
   setModelsByChainId,
 } from 'store/model/modelSlice';
-import { addOutput } from 'store/outputs/outputsSlice';
+import { addOutput, updateOutputFilters } from 'store/outputs/outputsSlice';
 import {
   type PromptItemType,
   addPromptItems,
@@ -374,6 +374,7 @@ export const handleRunModel = async ({
             )
           );
           dispatch(addOutput({ chainId, output }));
+          dispatch(updateOutputFilters({ chainId }));
           send(
             'run-connector-script',
             selectedModel,

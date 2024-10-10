@@ -1,0 +1,47 @@
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 0 6px;
+  gap: 6px;
+  height: 40px;
+  overflow: hidden;
+  overflow-x: scroll;
+}
+
+.button {
+  border: 1px solid var(--system-separator);
+}
+
+.clearButton {
+  margin-left: auto;
+}
+
+.search {
+  background-color: transparent;
+  border: 1px solid var(--system-separator);
+  max-width: 224px;
+  min-width: 80px
+}
+
+.search {
+  padding-right: 2px;
+}
+
+.search > div:first-child {
+  padding: 4px 10px;
+}
+
+
+.search > div:nth-child(2) > button {
+  width: 20px;
+  height: 20px;
+}
+
+.filterValue {
+  width: 90px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  text-align: start;
+}

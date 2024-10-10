@@ -17,6 +17,10 @@
   overflow-y: scroll;
 }
 
+.withFilter {
+  height: calc(100% - 80px);
+}
+
 .placeholder {
   display: flex;
   flex-direction: column;
