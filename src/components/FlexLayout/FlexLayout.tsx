@@ -25,7 +25,7 @@ import { handleTabDrag, onModelChange, tabRender } from './FlexLayout.helper';
 import { LayoutComponents } from './FlexLayout.config';
 import { Tree } from '../Tree';
 import { PromptEditor } from '../PromptEditor';
-import { Layout as Output } from '../Layout';
+import { Layout as Outputs } from '../Layout';
 import { TitleBar } from '../TitleBar';
 import { Tools } from '../Tools';
 import { Settings } from '../Settings';
@@ -184,7 +184,7 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
       case LayoutComponents.promptEditor:
         return <PromptEditor tabId={node.getId()} chainId={config?.chainId} />;
       case LayoutComponents.output:
-        return <Output />;
+        return <Outputs />;
       case LayoutComponents.tools:
         return <Tools />;
       case LayoutComponents.settings:

@@ -58,6 +58,12 @@ export const DICTIONARY = {
     downloadingUpdate: 'Downloading Update...',
     createNewWorkflow: 'Create new workflow',
     workflow: 'Workflow',
+    allModels: 'All models',
+    allRating: 'All rating',
+    clearFilters: 'Clear filters',
+    nice: 'Nice',
+    neutral: 'Neutral',
+    dislike: 'Dislike',
   },
   settingsOptions: {
     appSettings: 'App settings',
@@ -80,6 +86,7 @@ export const DICTIONARY = {
     search: 'Search',
     noMatchFound: 'No match found',
     acmeInc: 'Acme Inc.',
+    searchOrTextExpression: 'Search or text expression',
   },
   questions: {
     areYouWantToDeleteChain:

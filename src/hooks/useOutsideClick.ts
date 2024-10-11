@@ -1,20 +1,22 @@
 import { useCallback, useEffect, useRef } from 'react';
 
 interface UseOutsideClickOptions {
-  ignoreElementRef?: React.RefObject<HTMLElement>;
+  ignoreElementRefs?: React.RefObject<HTMLElement>[];
 }
 
 export const useOutsideClick = (
   callback: () => void,
   options: UseOutsideClickOptions = {}
 ): React.RefObject<any> => {
-  const { ignoreElementRef } = options;
+  const { ignoreElementRefs } = options;
   const wrapperRef = useRef<any>(null);
   const handleOutsideClick = useCallback(
     (event: MouseEvent | TouchEvent) => {
       event.stopPropagation();
-      const isClickOnIgnoreElement = ignoreElementRef
-        ? ignoreElementRef.current?.contains(event.target as Node)
+      const isClickOnIgnoreElement = ignoreElementRefs
+        ? ignoreElementRefs.some((ignoreElementRef) =>
+            ignoreElementRef.current?.contains(event.target as Node)
+          )
         : false;
       if (
         !isClickOnIgnoreElement &&
@@ -24,7 +26,7 @@ export const useOutsideClick = (
         callback();
       }
     },
-    [callback, wrapperRef, ignoreElementRef]
+    [callback, wrapperRef, ignoreElementRefs]
   );
 
   useEffect(() => {

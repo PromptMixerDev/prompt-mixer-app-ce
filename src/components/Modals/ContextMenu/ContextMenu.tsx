@@ -19,7 +19,7 @@ interface ContextMenuProps {
   onClose: () => void;
   align?: AlignValues;
   triggerRef?: React.RefObject<HTMLElement>;
-  ignoreElementRef?: React.RefObject<HTMLElement>;
+  ignoreElementRefs?: React.RefObject<HTMLElement>[];
   children: React.ReactNode;
   offset?: number;
   rect?: ClientRect;
@@ -31,7 +31,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   align = AlignValues.UNDER,
   triggerRef,
-  ignoreElementRef,
+  ignoreElementRefs,
   children,
   offset = OFFSET,
   rect,
@@ -84,7 +84,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         break;
     }
   }
-  const ref = useOutsideClick(onClose, { ignoreElementRef });
+  const ref = useOutsideClick(onClose, { ignoreElementRefs });
 
   useLayoutEffect(() => {
     if (ref?.current) {

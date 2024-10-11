@@ -36,7 +36,7 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
       onClose={onClose}
       align={align}
       triggerRef={triggerRef}
-      ignoreElementRef={ignoreElementRef}
+      ignoreElementRefs={ignoreElementRef && [ignoreElementRef]}
       offset={offset}
       rect={rect}
     >

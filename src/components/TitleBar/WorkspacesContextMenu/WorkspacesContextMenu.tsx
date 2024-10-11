@@ -150,7 +150,7 @@ export const WorkspacesContextMenu: React.FC<WorkspacesContextMenuProps> = ({
       onClose={onClose}
       align={align}
       triggerRef={triggerRef}
-      ignoreElementRef={ignoreElementRef}
+      ignoreElementRefs={ignoreElementRef && [ignoreElementRef]}
     >
       <div className={styles.wrapper}>
         {isLoading && <Spinner />}

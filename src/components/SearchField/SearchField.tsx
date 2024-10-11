@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import classnames from 'classnames';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import isUndefined from 'lodash/isUndefined';
 import debounce from 'lodash/debounce';
 import { ReactComponent as SearchIcon } from 'assets/icons/search.svg';
 import { ReactComponent as CloseIcon } from 'assets/icons/close.svg';
@@ -12,6 +13,7 @@ interface SearchFieldProps {
   onSearch: (value: string) => void;
   searchFieldClass?: string;
   placeholder?: string;
+  externalSeachKey?: string;
 }
 
 const debouncedFunc = debounce((action, ...args) => {
@@ -22,14 +24,21 @@ export const SearchField: React.FC<SearchFieldProps> = ({
   onSearch,
   searchFieldClass,
   placeholder = DICTIONARY.placeholders.search,
+  externalSeachKey,
 }) => {
-  const [searchKey, setSearchKey] = useState('');
+  const [searchKey, setSearchKey] = useState(externalSeachKey ?? '');
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const key = e.target.value;
     setSearchKey(key);
     debouncedFunc(onSearch, key);
   };
+
+  useEffect(() => {
+    if (!isUndefined(externalSeachKey)) {
+      setSearchKey(externalSeachKey);
+    }
+  }, [externalSeachKey]);
 
   return (
     <div className={classnames(styles.searchWrapper, searchFieldClass)}>

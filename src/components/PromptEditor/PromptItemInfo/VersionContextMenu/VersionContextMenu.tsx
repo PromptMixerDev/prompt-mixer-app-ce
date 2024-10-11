@@ -31,7 +31,7 @@ export const VersionContextMenu: React.FC<VersionContextMenuProps> = ({
       onClose={onClose}
       align={AlignValues.RIGHT_CENTER}
       triggerRef={triggerRef}
-      ignoreElementRef={ignoreElementRef}
+      ignoreElementRefs={ignoreElementRef && [ignoreElementRef]}
     >
       <div className={styles.wrapper}>
         <div className={styles.header}>
