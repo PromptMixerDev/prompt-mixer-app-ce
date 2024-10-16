@@ -23,6 +23,7 @@ Feature: Run model with prompt to get output
     When I set "ANTHROPIC_AI_API_KEY" environment variable to the inputfield "#API_KEY"
     And I close the "Connectors" tab
     And I click on the element "#run-button"
+    And I pause for 100ms
     Then I expect that element "#run-button" is not enabled
     Then I expect that "1" child elements matching "[class*='Output_wrapper']" exist inside container element "[class*='Layout_content']"
     Then I expect that element "[class*='Output_modelInfo']" contains the text "Anthropic AI Connector, claude-2.0"
