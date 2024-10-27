@@ -35,6 +35,10 @@
     "email": "hello@promptmixer.dev"
   },
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=18.x",
+    "npm": ">=9.x"
+  },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@electron/notarize": "^2.4.0",
