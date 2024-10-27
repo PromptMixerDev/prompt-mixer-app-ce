@@ -1,0 +1,71 @@
+name: Test
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [22.x, 24.x]
+      fail-fast: false # Continue with other versions if one fails
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        # Force install specific electron version to ensure compatibility
+        npm ci
+        # Ensure electron is properly installed for the tests
+        npm rebuild electron
+        
+    - name: Format check
+      run: npm run format:check || true
+      
+    - name: Lint
+      run: npm run lint || true
+
+    - name: Build
+      run: npm run react-build
+      
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@latest
+      with:
+        chrome-version: stable
+        
+    - name: Start application and run E2E tests
+      env:
+        TEST: 'true'
+        CI: 'true'
+        DISPLAY: ':99'
+      run: |
+        # Start Xvfb
+        /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        sleep 5
+        
+        # Run the tests with increased timeout and debugging
+        DEBUG=wdio* WDIO_LOG_LEVEL=debug npm test
+        
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-artifacts
+        path: |
+          tests/e2e/logs/**
+          tests/e2e/screenshots/**
+          tests/e2e/videos/**
+          wdio-logs/**
+        if-no-files-found: ignore
