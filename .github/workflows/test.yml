@@ -1,0 +1,87 @@
+name: Test
+
+on:
+  push:
+    branches: [ '*' ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [16.x, 18.x]
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v3
+      with:
+        node-version: ${{ matrix.node-version }}
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+      
+    - name: Format check
+      run: npm run format:check
+      
+    - name: Lint
+      run: npm run lint
+
+    - name: Build
+      run: npm run react-build
+      
+    - name: Install Chrome
+      uses: browser-actions/setup-chrome@latest
+      with:
+        chrome-version: stable
+        
+    - name: Start application and run E2E tests
+      env:
+        TEST: 'true'
+        CI: 'true'
+        DISPLAY: ':99'
+      run: |
+        # Start Xvfb
+        /usr/bin/Xvfb :99 -screen 0 1024x768x24 > /dev/null 2>&1 &
+        
+        # Run the tests
+        npm test
+        
+    - name: Upload test artifacts
+      if: always()
+      uses: actions/upload-artifact@v3
+      with:
+        name: test-artifacts
+        path: |
+          tests/e2e/logs/**
+          tests/e2e/screenshots/**
+          tests/e2e/videos/**
+          wdio-logs/**
+        if-no-files-found: ignore
+
+  lint-pr-title:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    
+    steps:
+    - uses: amannn/action-semantic-pull-request@v5
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        types: |
+          fix
+          feat
+          docs
+          style
+          refactor
+          perf
+          test
+          build
+          ci
+          chore
+          revert
