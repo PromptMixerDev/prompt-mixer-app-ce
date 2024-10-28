@@ -12,8 +12,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [22.x, 24.x]
+        node-version: [22.x]
       fail-fast: false # Continue with other versions if one fails
+      # Note: Node.js 24.x will be added once it's officially released
 
     steps:
     - uses: actions/checkout@v3
