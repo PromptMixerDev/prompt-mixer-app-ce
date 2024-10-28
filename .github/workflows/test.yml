@@ -27,11 +27,11 @@ jobs:
     
     - name: Install dependencies
       run: |
-        # Clear npm cache and remove lock file
-        npm cache clean --force
+        # Remove existing lock file and clear cache
         rm -f package-lock.json
-        # Install dependencies and generate new lock file
-        npm install
+        npm cache clean --force
+        # Install dependencies with legacy peer deps to handle ESLint plugin conflicts
+        npm install --legacy-peer-deps
         # Ensure electron is properly installed for the tests
         npm rebuild electron
         
