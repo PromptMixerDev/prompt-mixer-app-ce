@@ -26,8 +26,11 @@ jobs:
     
     - name: Install dependencies
       run: |
-        # Force install specific electron version to ensure compatibility
-        npm ci
+        # Clear npm cache and remove lock file
+        npm cache clean --force
+        rm -f package-lock.json
+        # Install dependencies and generate new lock file
+        npm install
         # Ensure electron is properly installed for the tests
         npm rebuild electron
         
