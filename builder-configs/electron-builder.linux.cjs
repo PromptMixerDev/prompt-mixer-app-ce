@@ -2,8 +2,11 @@ const commonConfig = require('./electron-builder.common.cjs');
 
 const config = {
   ...commonConfig,
+  productName: 'promptmixer',
+  executableName: 'promptmixer',
   linux: {
     executableName: 'promptmixer',
+    artifactName: 'promptmixer-${version}.${ext}',
     target: [
       {
         target: 'AppImage',
