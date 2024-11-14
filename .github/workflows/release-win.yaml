@@ -19,13 +19,6 @@ jobs:
       version: ${{ steps.set_output.outputs.version }}
     env:
       GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
-      REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
-      REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
-      REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
-      REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
-      REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_MONTHLY_SUBSCRIPTION_PRICE_ID }}
-      REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID: ${{ secrets.REACT_APP_YEARLY_SUBSCRIPTION_PRICE_ID }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -33,10 +26,10 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '21.x'
+          node-version: '22.x'
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: ~/.yarn
           key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
