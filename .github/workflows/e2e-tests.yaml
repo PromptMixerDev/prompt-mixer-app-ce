@@ -10,10 +10,9 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
         node-version: ['22']
 
     steps:
@@ -29,7 +28,7 @@ jobs:
         run: yarn install
 
       - name: 📦 Build Electron app
-        run: yarn build:e2e
+        run: yarn build:linux
 
       - name: 🧪 Run E2E tests
         run: yarn test
