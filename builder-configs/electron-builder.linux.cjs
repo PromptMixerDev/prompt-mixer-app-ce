@@ -3,6 +3,7 @@ const commonConfig = require('./electron-builder.common.cjs');
 const config = {
   ...commonConfig,
   linux: {
+    executableName: 'promptmixer',
     target: [
       {
         target: 'AppImage',
