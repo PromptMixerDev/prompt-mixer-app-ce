@@ -10,11 +10,10 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        os: [windows-latest, ubuntu-latest]
-        node-version: ['21']
+        node-version: ['22']
 
     steps:
       - name: 🔄 Check out repository
@@ -25,17 +24,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
+      - name: 🔑 Setup GH_TOKEN
+        run: echo "GH_TOKEN=${{ secrets.GITHUB_TOKEN }}" >> $GITHUB_ENV
+
       - name: 🧱 Install dependencies
         run: yarn install
 
       - name: 📦 Build Electron app
-        run: yarn build:e2e
-        env:
-          REACT_APP_FIREBASE_API_KEY: ${{ secrets.REACT_APP_FIREBASE_API_KEY }}
-          REACT_APP_FIREBASE_AUTH_DOMAIN: ${{ secrets.REACT_APP_FIREBASE_AUTH_DOMAIN }}
-          REACT_APP_FIREBASE_PROJECT_ID: ${{ secrets.REACT_APP_FIREBASE_PROJECT_ID }}
-          REACT_APP_FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.REACT_APP_FIREBASE_MESSAGING_SENDER_ID }}
-          REACT_APP_FIREBASE_APP_ID: ${{ secrets.REACT_APP_FIREBASE_APP_ID }}
+        run: yarn build:linux
 
       - name: 🧪 Run E2E tests
         run: yarn test

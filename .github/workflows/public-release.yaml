@@ -73,7 +73,7 @@ jobs:
       - name: Upload assets to the release
         env:
           ACCESS_TOKEN: ${{ secrets.GH_TOKEN }}
-          SOURCE_REPO: 'PromptMixerDev/prompt-mixer-app'
+          SOURCE_REPO: 'PromptMixerDev/prompt-mixer-app-ce'
           TARGET_REPO: 'PromptMixerDev/prompt-mixer-releases'
           TAG_NAME: ${{ steps.get_tag.outputs.TAG_NAME }}
         run: |
