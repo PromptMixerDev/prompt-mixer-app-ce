@@ -87,14 +87,24 @@ jobs:
       - name: Install osslsigncode
         run: sudo apt-get update && sudo apt-get install -y osslsigncode
 
+      - name: Get SSL.com Access Token
+        id: get_token
+        run: |
+          RESPONSE=$(curl -s -X POST https://login.ssl.com/oauth2/token \
+            -d "grant_type=password" \
+            -d "username=${{ secrets.ES_USERNAME }}" \
+            -d "password=${{ secrets.ES_PASSWORD }}")
+          
+          ACCESS_TOKEN=$(echo $RESPONSE | jq -r '.access_token')
+          echo "access_token=$ACCESS_TOKEN" >> $GITHUB_OUTPUT
+        shell: bash
+
       - name: Sign Windows executable
         uses: sslcom/esigner-codesign@develop
         with:
-          command: sign
-          username: ${{ secrets.ES_USERNAME }}
-          password: ${{ secrets.ES_PASSWORD }}
+          command: batch_sign_hash
+          access_token: ${{ steps.get_token.outputs.access_token }}
           credential_id: ${{ secrets.CREDENTIAL_ID }}
-          totp_secret: ${{ secrets.ES_TOTP_SECRET }}
           file_path: ${{ github.workspace }}/dist/PromptMixer.${{ needs.build-windows.outputs.version }}.exe
           output_path: ${{ github.workspace }}/dist/signed
 
