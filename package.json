@@ -72,7 +72,7 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "wait-on": "^8.0.1",
-    "wdio-electron-service": "6.3.2"
+    "wdio-electron-service": "7.2.0"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.2.7",
