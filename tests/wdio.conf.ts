@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/consistent-type-assertions */
 import type { Options } from '@wdio/types';
 import { hooks } from './src/support/hooks.js';
+import * as path from 'path';
 
 process.env.TEST = 'true';
 
@@ -65,13 +66,15 @@ export const config: Options.Testrunner = {
   capabilities: [
     {
       browserName: 'electron',
-      // Electron service options
-      // see https://webdriver.io/docs/wdio-electron-service/#configuration
-      // 'wdio:electronServiceOptions': {
-      //   appBinaryPath: appPath,
-      //   // custom application args
-      //   appArgs: []
-      // }
+      'wdio:electronServiceOptions': {
+        appBinaryPath: path.join(process.cwd(), 'dist', 
+          process.platform === 'win32' 
+            ? 'win-unpacked/PromptMixer.exe'
+            : process.platform === 'darwin'
+              ? 'mac-arm64/PromptMixer.app/Contents/MacOS/PromptMixer'
+              : 'linux-unpacked/promptmixer'
+        )
+      }
     },
   ],
 
