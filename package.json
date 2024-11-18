@@ -84,7 +84,7 @@
     "electron-updater": "^6.2.1",
     "flexlayout-react": "^0.7.15",
     "idb": "^8.0.0",
-    "js-tiktoken": "^1.0.14",
+    "js-tiktoken": "^1.0.15",
     "lodash": "^4.17.21",
     "papaparse": "^5.4.1",
     "prismjs": "^1.29.0",
