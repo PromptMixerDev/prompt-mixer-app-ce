@@ -81,7 +81,7 @@
     "draft-js": "^0.11.7",
     "electron-is-dev": "^3.0.1",
     "electron-notarize": "^1.2.2",
-    "electron-updater": "^6.2.1",
+    "electron-updater": "^6.3.9",
     "flexlayout-react": "^0.7.15",
     "idb": "^8.0.0",
     "js-tiktoken": "^1.0.15",
