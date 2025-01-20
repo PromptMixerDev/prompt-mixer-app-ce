@@ -3552,15 +3552,15 @@
   dependencies:
     "@types/node" "^20.1.0"
 
-"@wdio/reporter@8.32.4":
-  version "8.32.4"
-  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-8.32.4.tgz#94b817df102cd3efaa63260d894a02eca7ee2cf3"
-  integrity sha512-kZXbyNuZSSpk4kBavDb+ac25ODu9NVZED6WwZafrlMSnBHcDkoMt26Q0Jp3RKUj+FTyuKH0HvfeLrwVkk6QKDw==
+"@wdio/reporter@9.5.0":
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-9.5.0.tgz#f7577d31a1b38f70d4dc3414c1831c6e78b8f5eb"
+  integrity sha512-ycdbU97tDT7RCgutM+fSwbd0FIab821BAc0hYopCkB0FIooHUjIjvXmh0QichasS5a21tGe0UXfCcnn1S6V6Fw==
   dependencies:
     "@types/node" "^20.1.0"
-    "@wdio/logger" "8.28.0"
-    "@wdio/types" "8.32.4"
-    diff "^5.0.0"
+    "@wdio/logger" "9.4.4"
+    "@wdio/types" "9.5.0"
+    diff "^7.0.0"
     object-inspect "^1.12.0"
 
 "@wdio/runner@9.2.15":
@@ -3579,16 +3579,16 @@
     webdriver "9.2.8"
     webdriverio "9.2.14"
 
-"@wdio/spec-reporter@8.32.4":
-  version "8.32.4"
-  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-8.32.4.tgz#e28d0d139757b409efbe3f4fbe408c536946ff31"
-  integrity sha512-3TbD/KrK+EhUex5d5/11qSEKqyNiMHqm27my86tdiK0Ltt9pc/9Ybg1YBiWKlzV9U9MI4seVBRZCXltG17ky/A==
+"@wdio/spec-reporter@9.5.0":
+  version "9.5.0"
+  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-9.5.0.tgz#b8a746fd3c6d2a19328f1df9403365028ccd0b55"
+  integrity sha512-xapzWIPZE8E5IHQdhIESJ9u10fZMWi91D0Hu3EiyDvZ6ClJR6LIS/eeGChXVx3+x/OeU6yiOwhmkV4mCUyFeNA==
   dependencies:
-    "@wdio/reporter" "8.32.4"
-    "@wdio/types" "8.32.4"
+    "@wdio/reporter" "9.5.0"
+    "@wdio/types" "9.5.0"
     chalk "^5.1.2"
     easy-table "^1.2.0"
-    pretty-ms "^7.0.0"
+    pretty-ms "^9.0.0"
 
 "@wdio/types@8.32.4":
   version "8.32.4"
@@ -5893,10 +5893,10 @@ diff@^4.0.1:
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
 
-diff@^5.0.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/diff/-/diff-5.2.0.tgz#26ded047cd1179b78b9537d5ef725503ce1ae531"
-  integrity sha512-uIFDxqpRZGZ6ThOk84hEfqWoHx2devRFvpTZcTHur85vImfaxUbTW9Ryh4CpCuDnToOP1CEtXKIgytHBPVff5A==
+diff@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/diff/-/diff-7.0.0.tgz#3fb34d387cd76d803f6eebea67b921dab0182a9a"
+  integrity sha512-PJWHUb1RFevKCwaFA9RlG5tCd+FO5iRh9A8HEtkmBH2Li03iJriB6m6JIN4rGz3K3JLawI7/veA1xzRKP6ISBw==
 
 dir-compare@^3.0.0:
   version "3.3.0"
@@ -11053,11 +11053,6 @@ parse-json@^8.0.0:
     index-to-position "^0.1.2"
     type-fest "^4.7.1"
 
-parse-ms@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-2.1.0.tgz#348565a753d4391fa524029956b172cb7753097d"
-  integrity sha512-kHt7kzLoS9VBZfUsiKjv43mr91ea+U05EyKkEtqp7vNbHxmaVuEqN7XxeEVnGrMtYOAxGrDElSi96K7EgO1zCA==
-
 parse-ms@^4.0.0:
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/parse-ms/-/parse-ms-4.0.0.tgz#c0c058edd47c2a590151a718990533fd62803df4"
@@ -11865,13 +11860,6 @@ pretty-format@^29.7.0:
     "@jest/schemas" "^29.6.3"
     ansi-styles "^5.0.0"
     react-is "^18.0.0"
-
-pretty-ms@^7.0.0:
-  version "7.0.1"
-  resolved "https://registry.yarnpkg.com/pretty-ms/-/pretty-ms-7.0.1.tgz#7d903eaab281f7d8e03c66f867e239dc32fb73e8"
-  integrity sha512-973driJZvxiGOQ5ONsFhOF/DtzPMOMtgC11kCpUrPGMTgqp2q/1gwzCquocrN33is0VZ5GFHXZYMM9l6h67v2Q==
-  dependencies:
-    parse-ms "^2.1.0"
 
 pretty-ms@^9.0.0:
   version "9.2.0"
