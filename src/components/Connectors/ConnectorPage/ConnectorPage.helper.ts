@@ -7,13 +7,15 @@ import {
   updateConnectorSettings,
 } from 'db/workspaceDb';
 import { DICTIONARY } from 'dictionary';
+import { type IConnector } from '../../ModelsSelector';
 
 export const updateSettings = (
   db: IDBWrapper,
   setting: ConnectorSetting,
   savedSettings: ConnectorSetting[],
   setSavedSettings: Dispatch<SetStateAction<ConnectorSetting[]>>,
-  connectorFolder: string
+  connector: IConnector,
+  send: (channel: string, ...args: any[]) => void
 ): void => {
   let newSettings: ConnectorSetting[] = [];
   const index = savedSettings.findIndex(
@@ -27,7 +29,8 @@ export const updateSettings = (
     newSettings = [...savedSettings, setting];
   }
   setSavedSettings(newSettings);
-  updateConnectorSettings(db, connectorFolder, newSettings).catch((error) => {
+  send('update-connector', connector, newSettings);
+  updateConnectorSettings(db, connector.connectorFolder, newSettings).catch((error) => {
     console.error(error);
   });
 };
