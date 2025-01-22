@@ -35,13 +35,13 @@ export const ConnectorPage: React.FC<ConnectorPageProps> = ({
   const { send } = useIpcRenderer();
 
   const handleSettingsUpdate = (setting: IConnectorSetting): void => {
-    send('update-connector', connector, savedSettings);
     updateSettings(
       db,
       setting,
       savedSettings,
       setSavedSettings,
-      connector.connectorFolder
+      connector,
+      send
     );
   };
 
