@@ -75,7 +75,7 @@
     "wdio-electron-service": "6.3.2"
   },
   "dependencies": {
-    "@reduxjs/toolkit": "^2.2.7",
+    "@reduxjs/toolkit": "^2.5.0",
     "classnames": "^2.5.1",
     "dotenv": "^16.4.5",
     "draft-js": "^0.11.7",
