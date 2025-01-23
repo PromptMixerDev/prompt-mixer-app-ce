@@ -30,9 +30,11 @@ export const updateSettings = (
   }
   setSavedSettings(newSettings);
   send('update-connector', connector, newSettings);
-  updateConnectorSettings(db, connector.connectorFolder, newSettings).catch((error) => {
-    console.error(error);
-  });
+  updateConnectorSettings(db, connector.connectorFolder, newSettings).catch(
+    (error) => {
+      console.error(error);
+    }
+  );
 };
 
 export const readAndSetSavedSettings = (
