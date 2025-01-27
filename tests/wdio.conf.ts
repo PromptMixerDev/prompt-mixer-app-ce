@@ -67,14 +67,16 @@ export const config: Options.Testrunner = {
     {
       browserName: 'electron',
       'wdio:electronServiceOptions': {
-        appBinaryPath: path.join(process.cwd(), 'dist', 
-          process.platform === 'win32' 
+        appBinaryPath: path.join(
+          process.cwd(),
+          'dist',
+          process.platform === 'win32'
             ? 'win-unpacked/PromptMixer.exe'
             : process.platform === 'darwin'
               ? 'mac-arm64/PromptMixer.app/Contents/MacOS/PromptMixer'
               : 'linux-unpacked/promptmixer'
-        )
-      }
+        ),
+      },
     },
   ],
 

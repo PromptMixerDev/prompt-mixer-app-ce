@@ -27,7 +27,10 @@ When(
 
 When(/^I (add|set) "([^"]*)?" to the inputfield "([^"]*)?"$/, setInputField);
 
-When(/^I set "([^"]*)?" environment variable to the inputfield "([^"]*)?"$/, setEnvVar);
+When(
+  /^I set "([^"]*)?" environment variable to the inputfield "([^"]*)?"$/,
+  setEnvVar
+);
 
 When(
   /^I add multiline text "([^"]*)?" to the inputfield "([^"]*)?"$/,

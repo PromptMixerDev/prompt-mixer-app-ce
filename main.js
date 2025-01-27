@@ -307,8 +307,10 @@ async function callGetDynamicModelList(connector, savedSettings) {
 
 ipcMain.on('update-connector', async (event, connector, savedSettings) => {
   try {
-    const updatedConnector = callGetDynamicModelList(connector, savedSettings);
+    const updatedConnector = await callGetDynamicModelList(connector, { Settings: savedSettings} );
 
+    console.log('test push');
+    
     event.reply('update-connector-success', updatedConnector);
   } catch (error) {
     event.reply('update-connector-failed', error);
