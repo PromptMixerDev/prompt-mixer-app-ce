@@ -71,7 +71,7 @@
     "react-scripts": "^5.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
-    "wait-on": "^8.0.1",
+    "wait-on": "^8.0.2",
     "wdio-electron-service": "6.3.2"
   },
   "dependencies": {
