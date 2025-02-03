@@ -29,6 +29,8 @@ export const updateSettings = (
     newSettings = [...savedSettings, setting];
   }
   setSavedSettings(newSettings);
+
+  console.log('newSettings', newSettings);
   send('update-connector', connector, newSettings);
   updateConnectorSettings(db, connector.connectorFolder, newSettings).catch(
     (error) => {

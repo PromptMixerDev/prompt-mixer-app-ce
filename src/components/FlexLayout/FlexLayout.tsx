@@ -135,6 +135,12 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
       'update-connector-success': (value: IConnector) => {
         dispatch(updateConnector(value));
       },
+      'update-connector-failed': (error: any) => {
+        console.error(error);
+      },
+      'installed-connectors-error': (error: any) => {
+        console.error(error);
+      },
       'update-connector-version-success': () => {
         getAllSavedSettings(db)
           .then((res) => send('request-installed-connectors', res))

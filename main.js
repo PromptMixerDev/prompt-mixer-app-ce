@@ -224,6 +224,7 @@ ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
       event.reply('installed-connectors', res);
     } catch (error) {
       event.reply('installed-connectors', installedConnectors);
+      event.reply('installed-connectors-error', error);
     }
   } catch (e) {
     console.log(e);
@@ -270,47 +271,37 @@ async function callGetDynamicModelList(connector, savedSettings) {
 
   const baseDir = path.join(app.getPath('userData'), 'connectors');
 
-  try {
-    const connectorPath = path.join(
-      baseDir,
-      connector.connectorFolder,
-      'main.js'
-    );
+  const connectorPath = path.join(
+    baseDir,
+    connector.connectorFolder,
+    'main.js'
+  );
 
-    const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`)
-      .href;
+  const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`)
+    .href;
 
-    const plugin = await import(connectorUrl);
+  const plugin = await import(connectorUrl);
 
-    if (hasGetDynamicModelList(plugin)) {
-      const hasUserSettings = savedSettings.Settings?.every((setting) => {
-        return !!setting?.Value;
-      });
+  if (hasGetDynamicModelList(plugin)) {
+    const hasUserSettings = savedSettings.Settings?.every((setting) => {
+      return !!setting?.Value;
+    });
 
-      if (hasUserSettings) {
-        try {
-          const models = await plugin.getDynamicModelList(
-            savedSettings.Settings
-          );
-          connector.models = models;
-        } catch (error) {
-          console.log("Can't call getDynamicModelList from connector");
-        }
-      }
+    if (hasUserSettings) {
+
+      const models = await plugin.getDynamicModelList(
+        savedSettings.Settings
+      );
+      connector.models = models;
     }
-
-    return connector;
-  } catch (e) {
-    console.log(e);
   }
+
+  return connector;
 }
 
 ipcMain.on('update-connector', async (event, connector, savedSettings) => {
   try {
     const updatedConnector = await callGetDynamicModelList(connector, { Settings: savedSettings} );
-
-    console.log('test push');
-    
     event.reply('update-connector-success', updatedConnector);
   } catch (error) {
     event.reply('update-connector-failed', error);
