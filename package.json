@@ -82,7 +82,7 @@
     "electron-is-dev": "^3.0.1",
     "electron-notarize": "^1.2.2",
     "electron-updater": "^6.3.9",
-    "flexlayout-react": "^0.7.15",
+    "flexlayout-react": "^0.8.1",
     "idb": "^8.0.1",
     "js-tiktoken": "^1.0.15",
     "lodash": "^4.17.21",
