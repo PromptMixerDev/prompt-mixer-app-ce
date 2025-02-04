@@ -200,12 +200,10 @@ ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
     if (installedConnectors && savedSettings) {
       installedConnectors?.forEach((connector) => {
         const settingForConnector = savedSettings.find((savedSetting) => {
-          // two cases: when connector doesn't have settings or when user hasn't provided them yet
-          if (
-            connector.settings.length === 0 ||
-            connector.settings.some((setting) => !setting.value)
-          )
-            return true;
+          if (connector.settings.length === 0 ) {
+            return false;
+          }
+            
           return savedSetting.ConnectorFolder === connector.connectorFolder;
         });
 
