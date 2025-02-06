@@ -993,3 +993,26 @@ export const getAllWorkflows = async (db: IDBWrapper): Promise<Workflow[]> => {
   const workflows = (await db.getAll(DBStores.workflow)) as Workflow[];
   return workflows;
 };
+
+export const searchPromptChains = async (
+  db: IDBWrapper,
+  searchTerm: string
+) => {
+  const chains = (await db.searchItems(
+    DBStores.promptChain,
+    DBKeyPathes.title,
+    searchTerm
+  )) as PromptChain[];
+
+  return chains;
+};
+
+export const searchDatasets = async (db: IDBWrapper, searchTerm: string) => {
+  const datasets = (await db.searchItems(
+    DBStores.dataset,
+    DBKeyPathes.title,
+    searchTerm
+  )) as Dataset[];
+
+  return datasets;
+};

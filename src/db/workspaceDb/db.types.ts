@@ -183,7 +183,7 @@ export interface PromptMixerDBSchema extends DBSchema {
   PromptChain: {
     key: string;
     value: PromptChain;
-    indexes: { CollectionID: string };
+    indexes: { CollectionID: string; Title: string };
   };
   Prompt: {
     key: string;
@@ -193,7 +193,7 @@ export interface PromptMixerDBSchema extends DBSchema {
   PromptVersion: {
     key: string;
     value: PromptVersion;
-    indexes: { PromptID: string };
+    indexes: { PromptID: string; Content: string };
   };
   Output: {
     key: string;
@@ -212,7 +212,7 @@ export interface PromptMixerDBSchema extends DBSchema {
   Dataset: {
     key: string;
     value: Dataset;
-    indexes: { CollectionID: string };
+    indexes: { CollectionID: string; Title: string };
   };
   Variable: {
     key: string;
@@ -262,6 +262,8 @@ export enum DBKeyPathes {
   variableID = 'VariableID',
   changeLogItemID = 'ChangeLogItemID',
   workflowID = 'WorkflowID',
+  title = 'Title',
+  content = 'Content',
 }
 
 export interface DBConfig {

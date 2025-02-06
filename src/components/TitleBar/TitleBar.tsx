@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { v4 as uuidv4 } from 'uuid';
 import React, {
   useState,
   useEffect,
@@ -14,6 +15,11 @@ import { DICTIONARY } from 'dictionary';
 import { NotificationsContext } from 'contexts';
 import { useAppDispatch, useAppSelector } from 'hooks';
 import { DEFAULT_DB } from 'db/workspaceDb';
+import { SearchField } from 'components/SearchField';
+import {
+  ContextMenuOption,
+  ContextMenuWithOptions,
+} from 'components/Modals/ContextMenuWithOptions';
 import { Button, ButtonSize, ButtonTypes } from '../Button';
 import { ControlButtons } from './ControlButtons';
 import Modal from '../Modals/Modal/Modal';
@@ -23,6 +29,7 @@ import { AlignValues } from '../Modals/ContextMenu';
 import { MIN_WIDTH } from '../FlexLayout/FlexLayout.config';
 import {
   getContextMenuOptions,
+  getMainSearchOptions,
   handleSideBarElements,
   toggleSideBar,
 } from './TitleBar.helper';
@@ -56,7 +63,9 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   const dispatch = useAppDispatch();
   const { model } = useAppSelector((store) => store.flexLayoutModel);
   const { activeWorkspace } = useAppSelector((store) => store.workspace);
+  const { treeData } = useAppSelector((state) => state.tree);
   const buttonRef = useRef<HTMLDivElement | null>(null);
+  const searchFieldRef = useRef<HTMLDivElement | null>(null);
   const activeWorkspaceId = activeWorkspace?.WorkspaceID;
   const activeWorkspaceName =
     activeWorkspaceId === DEFAULT_DB
@@ -71,6 +80,12 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<Modals | null>(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [searchContextMenuVisible, setSearchContextMenuVisible] =
+    useState(false);
+  const [searchContextMenuOptions, setSearchContextMenuOptions] = useState<
+    ContextMenuOption[][]
+  >([]);
+  const [searchFieldKey, setSearchFieldKey] = useState<string>(uuidv4());
 
   useEffect(() => {
     const splitterElement = document.querySelector<HTMLElement>(
@@ -128,6 +143,21 @@ export const TitleBar: React.FC<TitleBarProps> = ({
     );
   };
 
+  const handleSearch = async (text: string): Promise<void> => {
+    const mainOptions = getMainSearchOptions(
+      treeData,
+      text.toLowerCase(),
+      model,
+      dispatch,
+      setSearchFieldKey,
+      setSearchContextMenuOptions
+    );
+
+    setSearchContextMenuOptions((prev) =>
+      [...mainOptions, prev[2]].filter(Boolean)
+    );
+  };
+
   return (
     <div className={styles.wrapper}>
       <ControlButtons />
@@ -173,6 +203,28 @@ export const TitleBar: React.FC<TitleBarProps> = ({
           />
         )}
       </div>
+      <SearchField
+        ref={searchFieldRef}
+        key={searchFieldKey}
+        onSearch={handleSearch}
+        searchFieldClass={styles.searchField}
+        onClick={() => {
+          setSearchContextMenuVisible(true);
+        }}
+      />
+      {searchContextMenuVisible && (
+        <ContextMenuWithOptions
+          optionGroups={searchContextMenuOptions}
+          onClose={() => {
+            setSearchContextMenuVisible(false);
+          }}
+          triggerRef={searchFieldRef}
+          align={AlignValues.UNDER}
+          offset={0}
+          contextMenuClass={styles.searchContextMenu}
+          placeholder={DICTIONARY.placeholders.typeToSearch}
+        />
+      )}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent === Modals.CREATE_WORKSPACE && (
           <CreateWorkspaceForm

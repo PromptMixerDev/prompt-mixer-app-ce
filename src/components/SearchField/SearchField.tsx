@@ -14,54 +14,67 @@ interface SearchFieldProps {
   searchFieldClass?: string;
   placeholder?: string;
   externalSeachKey?: string;
+  onClick?: () => void;
 }
 
 const debouncedFunc = debounce((action, ...args) => {
   action(...args);
 }, 300);
 
-export const SearchField: React.FC<SearchFieldProps> = ({
-  onSearch,
-  searchFieldClass,
-  placeholder = DICTIONARY.placeholders.search,
-  externalSeachKey,
-}) => {
-  const [searchKey, setSearchKey] = useState(externalSeachKey ?? '');
+export const SearchField = React.forwardRef<HTMLDivElement, SearchFieldProps>(
+  (
+    {
+      onSearch,
+      searchFieldClass,
+      placeholder = DICTIONARY.placeholders.search,
+      externalSeachKey,
+      onClick,
+    }: SearchFieldProps,
+    ref
+  ) => {
+    const [searchKey, setSearchKey] = useState(externalSeachKey ?? '');
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    const key = e.target.value;
-    setSearchKey(key);
-    debouncedFunc(onSearch, key);
-  };
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>): void => {
+      const key = e.target.value;
+      setSearchKey(key);
+      debouncedFunc(onSearch, key);
+    };
 
-  useEffect(() => {
-    if (!isUndefined(externalSeachKey)) {
-      setSearchKey(externalSeachKey);
-    }
-  }, [externalSeachKey]);
+    useEffect(() => {
+      if (!isUndefined(externalSeachKey)) {
+        setSearchKey(externalSeachKey);
+      }
+    }, [externalSeachKey]);
 
-  return (
-    <div className={classnames(styles.searchWrapper, searchFieldClass)}>
-      <div className={styles.search}>
-        <SearchIcon />
-        <input
-          value={searchKey}
-          placeholder={placeholder}
-          onChange={handleSearch}
-          className={styles.searchInput}
-        />
+    return (
+      <div
+        ref={ref}
+        className={classnames(styles.searchWrapper, searchFieldClass)}
+      >
+        <div className={styles.search}>
+          <SearchIcon />
+          <input
+            value={searchKey}
+            placeholder={placeholder}
+            onChange={handleSearch}
+            className={styles.searchInput}
+            onClick={onClick}
+          />
+        </div>
+        {searchKey && (
+          <Button
+            type={ButtonTypes.icon}
+            onClick={() => {
+              setSearchKey('');
+              onSearch('');
+            }}
+          >
+            <CloseIcon />
+          </Button>
+        )}
       </div>
-      {searchKey && (
-        <Button
-          type={ButtonTypes.icon}
-          onClick={() => {
-            setSearchKey('');
-            onSearch('');
-          }}
-        >
-          <CloseIcon />
-        </Button>
-      )}
-    </div>
-  );
-};
+    );
+  }
+);
+
+SearchField.displayName = 'SearchField';

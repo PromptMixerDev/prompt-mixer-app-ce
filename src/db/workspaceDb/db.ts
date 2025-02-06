@@ -175,6 +175,19 @@ export const initIDB = async (
             database.deleteObjectStore(DBStores.changeLogItem);
           }
         }
+        if (oldVersion < 15) {
+          const promptChainStore = transaction.objectStore(
+            DBStores.promptChain
+          );
+          promptChainStore.createIndex(DBKeyPathes.title, DBKeyPathes.title, {
+            unique: false,
+          });
+
+          const datasetStore = transaction.objectStore(DBStores.dataset);
+          datasetStore.createIndex(DBKeyPathes.title, DBKeyPathes.title, {
+            unique: false,
+          });
+        }
       },
     });
     return db;

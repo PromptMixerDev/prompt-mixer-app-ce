@@ -45,6 +45,33 @@ export class IDBWrapper {
     return await index.getAll(indexValue);
   }
 
+  async searchItems(
+    store: DBStores,
+    indexName: DBKeyPathes,
+    searchTerm: string
+  ): Promise<DBValue[]> {
+    const transaction = this.db.transaction(store, 'readonly');
+    const objStore = transaction.objectStore(store);
+    const index = objStore.index(indexName);
+    const results: DBValue[] = [];
+
+    const textRange = IDBKeyRange.bound(searchTerm, searchTerm + '\uffff');
+
+    try {
+      let cursor = await index.openCursor(textRange);
+
+      while (cursor) {
+        results.push(cursor.value);
+        cursor = await cursor.continue();
+      }
+
+      return results;
+    } catch (error) {
+      console.error('Error occurred while searching:', error);
+      throw error;
+    }
+  }
+
   async deleteDatabase(): Promise<void> {
     this.db.close();
     await deleteDB(this.dbName);

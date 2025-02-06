@@ -1,4 +1,5 @@
 import React, { type FunctionComponent, type SVGAttributes } from 'react';
+import classnames from 'classnames';
 import {
   ContextMenu,
   type AlignValues,
@@ -8,6 +9,7 @@ import styles from './ContextMenuWithOptions.module.css';
 
 export interface ContextMenuOption {
   label: string;
+  groupLabel?: string;
   icon?: FunctionComponent<SVGAttributes<SVGElement>>;
   onClick: (args: any) => any;
 }
@@ -20,6 +22,8 @@ interface ContextMenuWithOptionsProps {
   ignoreElementRef?: React.RefObject<HTMLElement>;
   offset?: number;
   rect?: ClientRect;
+  contextMenuClass?: string;
+  placeholder?: string;
 }
 
 export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
@@ -30,6 +34,8 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
   ignoreElementRef,
   offset,
   rect,
+  contextMenuClass,
+  placeholder,
 }) => {
   return (
     <ContextMenu
@@ -40,10 +46,20 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
       offset={offset}
       rect={rect}
     >
-      <div className={styles.wrapper}>
+      <div className={classnames(styles.wrapper, contextMenuClass)}>
+        {!optionGroups.length && placeholder && (
+          <div className={styles.group}>
+            <div className={classnames(styles.menuItem, styles.placeholder)}>
+              {placeholder}
+            </div>
+          </div>
+        )}
         {optionGroups.map((options, ind) => {
           return (
             <div key={ind} className={styles.group}>
+              {options[0].groupLabel && (
+                <div className={styles.groupLabel}>{options[0].groupLabel}</div>
+              )}
               {options.map((option, index) => {
                 const Icon = option.icon;
                 return (
