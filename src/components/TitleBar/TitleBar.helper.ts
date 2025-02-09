@@ -3,7 +3,8 @@ import groupBy from 'lodash/groupBy';
 import { DICTIONARY } from 'dictionary';
 import { type Model } from 'flexlayout-react';
 import { ReactComponent as FileTextIcon } from 'assets/icons/file-text.svg';
-import { ReactComponent as DatasetPurpleIcon } from 'assets/icons/dataset-purple.svg';
+import { ReactComponent as TextIcon } from 'assets/icons/text.svg';
+import { ReactComponent as DatasetBlueIcon } from 'assets/icons/dataset-blue.svg';
 import { ReactComponent as AddIcon } from 'assets/icons/add.svg';
 
 import { TreeEntityTypes, TreeItem } from 'db/workspaceDb';
@@ -19,8 +20,6 @@ import {
 import { SIDE_BAR, SPLITTER_SIZE } from '../FlexLayout/FlexLayout.config';
 import { type SideBarElements } from './TitleBar';
 import { type ContextMenuOption } from '../Modals/ContextMenuWithOptions';
-
-const MIN_SEARCH_TEXT_SIZE = 3;
 
 export const handleSideBarElements = (
   isOpen: boolean,
@@ -81,54 +80,82 @@ export const getMainSearchOptions = (
   model: Model,
   dispatch: AppDispatch,
   setSearchFieldKey: (value: string) => void,
-  setSearchContextMenuOptions: (value: ContextMenuOption[][]) => void
+  clearSearchOptions: () => void
 ): ContextMenuOption[][] => {
   const treeItemGroups = groupBy(treeData, 'entityType');
 
-  if (text.length < MIN_SEARCH_TEXT_SIZE) {
-    return [];
-  }
   const optionsGroups: ContextMenuOption[][] = [];
-  if (text?.length >= MIN_SEARCH_TEXT_SIZE) {
-    for (const key of [TreeEntityTypes.CHAIN, TreeEntityTypes.DATASET]) {
-      const options: ContextMenuOption[] = [];
-      treeItemGroups[key].forEach((item) => {
-        if (item.label.toLowerCase().includes(text.toLowerCase())) {
-          options.push({
-            groupLabel:
-              key === TreeEntityTypes.CHAIN
-                ? DICTIONARY.labels.prompts
-                : DICTIONARY.labels.datasets,
-            label: item.label,
-            icon:
-              key === TreeEntityTypes.CHAIN ? FileTextIcon : DatasetPurpleIcon,
-            onClick: () => {
-              if (key === TreeEntityTypes.CHAIN) {
-                addNewTabsHandler(
-                  getTabsInfo(item.id, item.label),
-                  model,
-                  dispatch
-                );
-              } else {
-                addNewTabsHandler(
-                  getDatasetTabInfo(item.id, item.label),
-                  model,
-                  dispatch
-                );
-              }
 
-              setSearchFieldKey(uuidv4());
-              setSearchContextMenuOptions([]);
-            },
-          });
-        }
-      });
+  for (const key of [TreeEntityTypes.CHAIN, TreeEntityTypes.DATASET]) {
+    const options: ContextMenuOption[] = [];
+    treeItemGroups[key].forEach((item) => {
+      if (item.label.toLowerCase().includes(text.toLowerCase())) {
+        options.push({
+          groupLabel:
+            key === TreeEntityTypes.CHAIN
+              ? DICTIONARY.labels.prompts
+              : DICTIONARY.labels.datasets,
+          label: item.label,
+          icon: key === TreeEntityTypes.CHAIN ? FileTextIcon : DatasetBlueIcon,
+          onClick: () => {
+            if (key === TreeEntityTypes.CHAIN) {
+              addNewTabsHandler(
+                getTabsInfo(item.id, item.label),
+                model,
+                dispatch
+              );
+            } else {
+              addNewTabsHandler(
+                getDatasetTabInfo(item.id, item.label),
+                model,
+                dispatch
+              );
+            }
 
-      if (options.length) {
-        optionsGroups.push(options);
+            setSearchFieldKey(uuidv4());
+            clearSearchOptions();
+          },
+        });
       }
+    });
+
+    if (options.length) {
+      optionsGroups.push(options);
     }
   }
 
   return optionsGroups;
+};
+
+export const getAdditionalSearchOptions = (
+  options: {
+    chainId: string;
+    chainTitle: string;
+    content: string;
+  }[],
+  model: Model,
+  dispatch: AppDispatch,
+  setSearchFieldKey: (value: string) => void,
+  clearSearchOptions: () => void
+): ContextMenuOption[][] => {
+  if (options.length === 0) {
+    return [];
+  }
+  return [
+    options.map((option) => ({
+      groupLabel: DICTIONARY.labels.text,
+      label: option.content,
+      icon: TextIcon,
+      onClick: () => {
+        addNewTabsHandler(
+          getTabsInfo(option.chainId, option.chainTitle),
+          model,
+          dispatch
+        );
+
+        setSearchFieldKey(uuidv4());
+        clearSearchOptions();
+      },
+    })),
+  ];
 };

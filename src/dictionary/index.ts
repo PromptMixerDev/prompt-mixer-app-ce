@@ -66,6 +66,7 @@ export const DICTIONARY = {
     dislike: 'Dislike',
     prompts: 'Prompts',
     datasets: 'Datasets',
+    text: 'Text',
   },
   settingsOptions: {
     appSettings: 'App settings',

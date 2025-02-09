@@ -12,9 +12,9 @@ import classNames from 'classnames';
 import { ReactComponent as LayoutColumnIcon } from 'assets/icons/layout-column.svg';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-right.svg';
 import { DICTIONARY } from 'dictionary';
-import { NotificationsContext } from 'contexts';
+import { NotificationsContext, WorkspaceDatabaseContext } from 'contexts';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { DEFAULT_DB } from 'db/workspaceDb';
+import { DEFAULT_DB, searchPromptChainContent } from 'db/workspaceDb';
 import { SearchField } from 'components/SearchField';
 import {
   ContextMenuOption,
@@ -28,6 +28,7 @@ import { WorkspaceImage } from '../Forms/CreateWorkspaceForm/WorkspaceImage';
 import { AlignValues } from '../Modals/ContextMenu';
 import { MIN_WIDTH } from '../FlexLayout/FlexLayout.config';
 import {
+  getAdditionalSearchOptions,
   getContextMenuOptions,
   getMainSearchOptions,
   handleSideBarElements,
@@ -54,12 +55,15 @@ export enum Modals {
   CREATE_WORKSPACE = 'createWorkspace',
 }
 
+const MIN_SEARCH_TEXT_SIZE = 3;
+
 export const TitleBar: React.FC<TitleBarProps> = ({
   sideBarRef,
   sideBarReady,
   setActiveWorkspaceId,
   resetWorkspaceDb,
 }): JSX.Element => {
+  const db = useContext(WorkspaceDatabaseContext)!;
   const dispatch = useAppDispatch();
   const { model } = useAppSelector((store) => store.flexLayoutModel);
   const { activeWorkspace } = useAppSelector((store) => store.workspace);
@@ -85,6 +89,10 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   const [searchContextMenuOptions, setSearchContextMenuOptions] = useState<
     ContextMenuOption[][]
   >([]);
+  const [
+    additionalSearchContextMenuOptions,
+    setAdditionalSearchContextMenuOptions,
+  ] = useState<ContextMenuOption[][]>([]);
   const [searchFieldKey, setSearchFieldKey] = useState<string>(uuidv4());
 
   useEffect(() => {
@@ -143,19 +151,42 @@ export const TitleBar: React.FC<TitleBarProps> = ({
     );
   };
 
+  const clearSearchOptions = (): void => {
+    setSearchContextMenuOptions([]);
+    setAdditionalSearchContextMenuOptions([]);
+  };
+
   const handleSearch = async (text: string): Promise<void> => {
+    if (text.length < MIN_SEARCH_TEXT_SIZE) {
+      clearSearchOptions();
+      return;
+    }
+
+    searchPromptChainContent(db, text)
+      .then((results) => {
+        const additionalOptions = getAdditionalSearchOptions(
+          results,
+          model,
+          dispatch,
+          setSearchFieldKey,
+          clearSearchOptions
+        );
+
+        setAdditionalSearchContextMenuOptions(additionalOptions);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
     const mainOptions = getMainSearchOptions(
       treeData,
       text.toLowerCase(),
       model,
       dispatch,
       setSearchFieldKey,
-      setSearchContextMenuOptions
+      clearSearchOptions
     );
 
-    setSearchContextMenuOptions((prev) =>
-      [...mainOptions, prev[2]].filter(Boolean)
-    );
+    setSearchContextMenuOptions(mainOptions);
   };
 
   return (
@@ -214,7 +245,10 @@ export const TitleBar: React.FC<TitleBarProps> = ({
       />
       {searchContextMenuVisible && (
         <ContextMenuWithOptions
-          optionGroups={searchContextMenuOptions}
+          optionGroups={[
+            ...searchContextMenuOptions,
+            ...additionalSearchContextMenuOptions,
+          ]}
           onClose={() => {
             setSearchContextMenuVisible(false);
           }}

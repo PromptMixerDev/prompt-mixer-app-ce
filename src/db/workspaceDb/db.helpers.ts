@@ -994,25 +994,72 @@ export const getAllWorkflows = async (db: IDBWrapper): Promise<Workflow[]> => {
   return workflows;
 };
 
-export const searchPromptChains = async (
-  db: IDBWrapper,
+const extractRelevantContent = (
+  content: string,
   searchTerm: string
-) => {
-  const chains = (await db.searchItems(
-    DBStores.promptChain,
-    DBKeyPathes.title,
-    searchTerm
-  )) as PromptChain[];
+): string => {
+  const lowerContent = content.toLowerCase();
+  const lowerSearchTerm = searchTerm.toLowerCase();
+  const index = lowerContent.indexOf(lowerSearchTerm);
 
-  return chains;
+  if (index === -1) {
+    return '';
+  }
+
+  const start = Math.max(0, index - 20);
+  const end = Math.min(content.length, index + searchTerm.length + 20);
+
+  let result = content.slice(start, end);
+
+  if (start > 0) {
+    result = '...' + result;
+  }
+  if (end < content.length) {
+    result = result + '...';
+  }
+
+  return result;
 };
 
-export const searchDatasets = async (db: IDBWrapper, searchTerm: string) => {
-  const datasets = (await db.searchItems(
-    DBStores.dataset,
-    DBKeyPathes.title,
+export const searchPromptChainContent = async (
+  db: IDBWrapper,
+  searchTerm: string
+): Promise<
+  {
+    chainId: string;
+    chainTitle: string;
+    content: string;
+  }[]
+> => {
+  const matches: PromptVersion[] = (await db.searchByIndex(
+    DBStores.promptVersion,
+    DBKeyPathes.content,
     searchTerm
-  )) as Dataset[];
+  )) as PromptVersion[];
 
-  return datasets;
+  const resultsPromises = matches.map(async (match: PromptVersion) => {
+    const prompt = (await db.get(DBStores.prompt, match.PromptID)) as Prompt;
+    if (prompt.ActiveVersionID === match.VersionID) {
+      const chain = (await db.get(
+        DBStores.promptChain,
+        prompt.ChainID
+      )) as PromptChain;
+
+      const content = extractRelevantContent(match.Content, searchTerm);
+
+      return {
+        chainId: chain.ChainID,
+        chainTitle: chain.Title,
+        content: content,
+      };
+    }
+    return null;
+  });
+
+  const results = await Promise.all(resultsPromises);
+  return results.filter((result) => result !== null) as {
+    chainId: string;
+    chainTitle: string;
+    content: string;
+  }[];
 };

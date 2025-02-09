@@ -57,7 +57,7 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
         {optionGroups.map((options, ind) => {
           return (
             <div key={ind} className={styles.group}>
-              {options[0].groupLabel && (
+              {options[0]?.groupLabel && (
                 <div className={styles.groupLabel}>{options[0].groupLabel}</div>
               )}
               {options.map((option, index) => {

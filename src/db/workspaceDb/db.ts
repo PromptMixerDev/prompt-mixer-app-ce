@@ -10,7 +10,7 @@ export const DEFAULT_DB = 'prompt-mixer';
 export const DEFAULT_USER_ID = 'prompt-mixer-user';
 
 const dbConfig: DBConfig = {
-  version: 14,
+  version: 15,
 };
 
 export const initIDB = async (
@@ -176,17 +176,16 @@ export const initIDB = async (
           }
         }
         if (oldVersion < 15) {
-          const promptChainStore = transaction.objectStore(
-            DBStores.promptChain
+          const promptVersionStore = transaction.objectStore(
+            DBStores.promptVersion
           );
-          promptChainStore.createIndex(DBKeyPathes.title, DBKeyPathes.title, {
-            unique: false,
-          });
-
-          const datasetStore = transaction.objectStore(DBStores.dataset);
-          datasetStore.createIndex(DBKeyPathes.title, DBKeyPathes.title, {
-            unique: false,
-          });
+          promptVersionStore.createIndex(
+            DBKeyPathes.content,
+            DBKeyPathes.content,
+            {
+              unique: false,
+            }
+          );
         }
       },
     });
