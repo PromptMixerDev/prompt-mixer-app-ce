@@ -64,6 +64,9 @@ export const DICTIONARY = {
     nice: 'Nice',
     neutral: 'Neutral',
     dislike: 'Dislike',
+    prompts: 'Prompts',
+    datasets: 'Datasets',
+    text: 'Text',
   },
   settingsOptions: {
     appSettings: 'App settings',
@@ -87,6 +90,7 @@ export const DICTIONARY = {
     noMatchFound: 'No match found',
     acmeInc: 'Acme Inc.',
     searchOrTextExpression: 'Search or text expression',
+    typeToSearch: 'Type to search...',
   },
   questions: {
     areYouWantToDeleteChain:

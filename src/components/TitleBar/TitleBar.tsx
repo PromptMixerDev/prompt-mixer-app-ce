@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+import { v4 as uuidv4 } from 'uuid';
 import React, {
   useState,
   useEffect,
@@ -11,9 +12,14 @@ import classNames from 'classnames';
 import { ReactComponent as LayoutColumnIcon } from 'assets/icons/layout-column.svg';
 import { ReactComponent as ArrowDownIcon } from 'assets/icons/arrow-right.svg';
 import { DICTIONARY } from 'dictionary';
-import { NotificationsContext } from 'contexts';
+import { NotificationsContext, WorkspaceDatabaseContext } from 'contexts';
 import { useAppDispatch, useAppSelector } from 'hooks';
-import { DEFAULT_DB } from 'db/workspaceDb';
+import { DEFAULT_DB, searchPromptChainContent } from 'db/workspaceDb';
+import { SearchField } from 'components/SearchField';
+import {
+  ContextMenuOption,
+  ContextMenuWithOptions,
+} from 'components/Modals/ContextMenuWithOptions';
 import { Button, ButtonSize, ButtonTypes } from '../Button';
 import { ControlButtons } from './ControlButtons';
 import Modal from '../Modals/Modal/Modal';
@@ -22,7 +28,9 @@ import { WorkspaceImage } from '../Forms/CreateWorkspaceForm/WorkspaceImage';
 import { AlignValues } from '../Modals/ContextMenu';
 import { MIN_WIDTH } from '../FlexLayout/FlexLayout.config';
 import {
+  getAdditionalSearchOptions,
   getContextMenuOptions,
+  getMainSearchOptions,
   handleSideBarElements,
   toggleSideBar,
 } from './TitleBar.helper';
@@ -47,16 +55,21 @@ export enum Modals {
   CREATE_WORKSPACE = 'createWorkspace',
 }
 
+const MIN_SEARCH_TEXT_SIZE = 3;
+
 export const TitleBar: React.FC<TitleBarProps> = ({
   sideBarRef,
   sideBarReady,
   setActiveWorkspaceId,
   resetWorkspaceDb,
 }): JSX.Element => {
+  const db = useContext(WorkspaceDatabaseContext)!;
   const dispatch = useAppDispatch();
   const { model } = useAppSelector((store) => store.flexLayoutModel);
   const { activeWorkspace } = useAppSelector((store) => store.workspace);
+  const { treeData } = useAppSelector((state) => state.tree);
   const buttonRef = useRef<HTMLDivElement | null>(null);
+  const searchFieldRef = useRef<HTMLDivElement | null>(null);
   const activeWorkspaceId = activeWorkspace?.WorkspaceID;
   const activeWorkspaceName =
     activeWorkspaceId === DEFAULT_DB
@@ -71,6 +84,16 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<Modals | null>(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
+  const [searchContextMenuVisible, setSearchContextMenuVisible] =
+    useState(false);
+  const [searchContextMenuOptions, setSearchContextMenuOptions] = useState<
+    ContextMenuOption[][]
+  >([]);
+  const [
+    additionalSearchContextMenuOptions,
+    setAdditionalSearchContextMenuOptions,
+  ] = useState<ContextMenuOption[][]>([]);
+  const [searchFieldKey, setSearchFieldKey] = useState<string>(uuidv4());
 
   useEffect(() => {
     const splitterElement = document.querySelector<HTMLElement>(
@@ -128,6 +151,44 @@ export const TitleBar: React.FC<TitleBarProps> = ({
     );
   };
 
+  const clearSearchOptions = (): void => {
+    setSearchContextMenuOptions([]);
+    setAdditionalSearchContextMenuOptions([]);
+  };
+
+  const handleSearch = async (text: string): Promise<void> => {
+    if (text.length < MIN_SEARCH_TEXT_SIZE) {
+      clearSearchOptions();
+      return;
+    }
+
+    searchPromptChainContent(db, text)
+      .then((results) => {
+        const additionalOptions = getAdditionalSearchOptions(
+          results,
+          model,
+          dispatch,
+          setSearchFieldKey,
+          clearSearchOptions
+        );
+
+        setAdditionalSearchContextMenuOptions(additionalOptions);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+    const mainOptions = getMainSearchOptions(
+      treeData,
+      text.toLowerCase(),
+      model,
+      dispatch,
+      setSearchFieldKey,
+      clearSearchOptions
+    );
+
+    setSearchContextMenuOptions(mainOptions);
+  };
+
   return (
     <div className={styles.wrapper}>
       <ControlButtons />
@@ -173,6 +234,31 @@ export const TitleBar: React.FC<TitleBarProps> = ({
           />
         )}
       </div>
+      <SearchField
+        ref={searchFieldRef}
+        key={searchFieldKey}
+        onSearch={handleSearch}
+        searchFieldClass={styles.searchField}
+        onClick={() => {
+          setSearchContextMenuVisible(true);
+        }}
+      />
+      {searchContextMenuVisible && (
+        <ContextMenuWithOptions
+          optionGroups={[
+            ...searchContextMenuOptions,
+            ...additionalSearchContextMenuOptions,
+          ]}
+          onClose={() => {
+            setSearchContextMenuVisible(false);
+          }}
+          triggerRef={searchFieldRef}
+          align={AlignValues.UNDER}
+          offset={0}
+          contextMenuClass={styles.searchContextMenu}
+          placeholder={DICTIONARY.placeholders.typeToSearch}
+        />
+      )}
       <Modal isOpen={isModalOpen} onClose={closeModal}>
         {modalContent === Modals.CREATE_WORKSPACE && (
           <CreateWorkspaceForm

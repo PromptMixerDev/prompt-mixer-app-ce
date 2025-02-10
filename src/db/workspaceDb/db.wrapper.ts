@@ -45,6 +45,34 @@ export class IDBWrapper {
     return await index.getAll(indexValue);
   }
 
+  async searchByIndex(
+    store: DBStores,
+    indexName: DBKeyPathes,
+    searchTerm: string
+  ): Promise<DBValue[]> {
+    const transaction = this.db.transaction(store, 'readonly');
+    const objStore = transaction.objectStore(store);
+    const index = objStore.index(indexName);
+
+    const results: DBValue[] = [];
+    const lowerSearchTerm = searchTerm.toLowerCase();
+
+    let cursor = await index.openCursor();
+
+    while (cursor) {
+      const indexValue = cursor.key;
+      if (
+        typeof indexValue === 'string' &&
+        indexValue.toLowerCase().includes(lowerSearchTerm)
+      ) {
+        results.push(cursor.value);
+      }
+      cursor = await cursor.continue();
+    }
+
+    return results;
+  }
+
   async deleteDatabase(): Promise<void> {
     this.db.close();
     await deleteDB(this.dbName);
