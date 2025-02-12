@@ -1,4 +1,10 @@
-import React, { type FunctionComponent, type SVGAttributes } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  type FunctionComponent,
+  type SVGAttributes,
+} from 'react';
 import classnames from 'classnames';
 import {
   ContextMenu,
@@ -37,6 +43,73 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
   contextMenuClass,
   placeholder,
 }) => {
+  const [focusedOptionIndex, setFocusedOptionIndex] = useState<number | null>(
+    null
+  );
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const flatOptions = optionGroups.flat();
+  const totalOptions = flatOptions.length;
+
+  const handleKeyDown = (e: KeyboardEvent): void => {
+    if (!totalOptions) return;
+
+    switch (e.key) {
+      case 'ArrowDown': {
+        e.preventDefault();
+        setFocusedOptionIndex((prevIndex) =>
+          prevIndex === null || prevIndex === totalOptions - 1
+            ? 0
+            : prevIndex + 1
+        );
+        break;
+      }
+      case 'ArrowUp': {
+        e.preventDefault();
+        setFocusedOptionIndex((prevIndex) =>
+          prevIndex === null || prevIndex === 0
+            ? totalOptions - 1
+            : prevIndex - 1
+        );
+        break;
+      }
+      case 'Enter': {
+        e.preventDefault();
+        if (focusedOptionIndex !== null) {
+          flatOptions[focusedOptionIndex].onClick(null);
+          onClose();
+        }
+        break;
+      }
+      case 'Escape': {
+        e.preventDefault();
+        onClose();
+        break;
+      }
+      default:
+        break;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [flatOptions, totalOptions]);
+
+  useEffect(() => {
+    if (focusedOptionIndex !== null && menuRef.current) {
+      const focusedItem =
+        menuRef.current.querySelectorAll('[data-menu-item]')[
+          focusedOptionIndex
+        ];
+      if (focusedItem) {
+        (focusedItem as HTMLElement).scrollIntoView({ block: 'nearest' });
+      }
+    }
+  }, [focusedOptionIndex]);
+
   return (
     <ContextMenu
       onClose={onClose}
@@ -46,7 +119,10 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
       offset={offset}
       rect={rect}
     >
-      <div className={classnames(styles.wrapper, contextMenuClass)}>
+      <div
+        ref={menuRef}
+        className={classnames(styles.wrapper, contextMenuClass)}
+      >
         {!optionGroups.length && placeholder && (
           <div className={styles.group}>
             <div className={classnames(styles.menuItem, styles.placeholder)}>
@@ -61,11 +137,16 @@ export const ContextMenuWithOptions: React.FC<ContextMenuWithOptionsProps> = ({
                 <div className={styles.groupLabel}>{options[0].groupLabel}</div>
               )}
               {options.map((option, index) => {
+                const IndexInFlatArray = flatOptions.indexOf(option);
+                const isFocused = IndexInFlatArray === focusedOptionIndex;
                 const Icon = option.icon;
                 return (
                   <div
                     key={index}
-                    className={styles.menuItem}
+                    data-menu-item
+                    className={classnames(styles.menuItem, {
+                      [styles.focused]: isFocused,
+                    })}
                     onClick={(e) => {
                       option.onClick(e);
                       onClose();
