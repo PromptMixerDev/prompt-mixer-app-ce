@@ -48,7 +48,7 @@
     "@types/react-syntax-highlighter": "^15.5.13",
     "@types/react-table": "^7.7.20",
     "@types/react-virtualized": "^9.22.0",
-    "@typescript-eslint/eslint-plugin": "^8.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.19.1",
     "@wdio/cli": "9.5.1",
     "@wdio/cucumber-framework": "9.5.0",
