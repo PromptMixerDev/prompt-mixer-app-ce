@@ -34,6 +34,10 @@
   background-color: var(--system-hover);
 }
 
+.focused {
+  background-color: var(--system-hover);
+}
+
 .menuItemIcon {
   width: var(--icon-size);
   color: var(--lable-secondary);
