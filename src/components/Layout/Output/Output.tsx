@@ -16,6 +16,7 @@ import { Button, ButtonTypes } from '../../Button';
 import { OutputActions } from '../OutputActions';
 import { getCompletionTime } from './Output.helper';
 import { MarkdownContent } from '../MarkdownContent';
+import { JSONContent } from '../JSONContent';
 import { getModelInfo } from '../../ModelsSelector/Model/Model.helper';
 import { ErrorSteps } from '../ErrorSteps';
 import styles from './Output.module.css';
@@ -27,6 +28,8 @@ interface OutputProps {
   isChain: boolean;
 }
 
+const TOOL_CALLS_FINISH_REASON = 'tool_calls';
+
 export const Output: React.FC<OutputProps> = ({
   output,
   handleDeleteOutput,
@@ -36,6 +39,9 @@ export const Output: React.FC<OutputProps> = ({
   const dispatch = useAppDispatch();
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const activeStep = output.activeStep;
+  const finishReason = output.Completions?.[activeStep]?.FinishReason;
+  console.log('finishReason', finishReason);
+
   const completionTime = getCompletionTime(output);
   const model = isChain
     ? (output as OutputType).ModelType
@@ -151,9 +157,15 @@ export const Output: React.FC<OutputProps> = ({
             !output.Loading &&
             output.Completions?.[activeStep]?.Content && (
               <div className={styles.content}>
-                <MarkdownContent
-                  content={output.Completions?.[activeStep]?.Content}
-                />
+                {finishReason === TOOL_CALLS_FINISH_REASON ? (
+                  <JSONContent
+                    content={output.Completions?.[activeStep]?.Content}
+                  />
+                ) : (
+                  <MarkdownContent
+                    content={output.Completions?.[activeStep]?.Content}
+                  />
+                )}
               </div>
             )}
           {!output.Error &&

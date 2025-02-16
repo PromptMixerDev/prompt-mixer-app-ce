@@ -21,9 +21,11 @@ import {
   type Workflow,
   type WorkflowOutput,
   type WorkflowCompletion,
+  AITool,
 } from 'db/workspaceDb';
 import { hashObject } from 'utils';
 import { type IPromptItem } from 'components/PromptEditor';
+import { IAITool } from 'components/AITools';
 
 const isChanged = <T>(oldValues: T, newValues: Partial<T>): boolean => {
   const keys = Object.keys(newValues) as Array<keyof T>;
@@ -1062,4 +1064,41 @@ export const searchPromptChainContent = async (
     chainTitle: string;
     content: string;
   }[];
+};
+
+export const addAIToolToChain = async (
+  db: IDBWrapper,
+  tool: IAITool
+): Promise<void> => {
+  const date = new Date();
+  const newTool: AITool = {
+    ...tool,
+    CreatedAt: date,
+    UpdatedAt: date,
+  };
+  await db.add(DBStores.aiTool, newTool);
+};
+
+export const updateAIToolInChain = async (
+  db: IDBWrapper,
+  tool: IAITool
+): Promise<void> => {
+  const existingTool = (await db.get(DBStores.aiTool, tool.AIToolID)) as AITool;
+  await db.update(DBStores.aiTool, {
+    ...existingTool,
+    ...tool,
+    UpdatedAt: new Date(),
+  });
+};
+
+export const getAIToolsByChainId = async (
+  db: IDBWrapper,
+  chainId: string
+): Promise<AITool[]> => {
+  const tools = (await db.getAllFromIndex(
+    DBStores.aiTool,
+    DBKeyPathes.chainID,
+    chainId
+  )) as AITool[];
+  return tools.sort((a, b) => (a.CreatedAt < b.CreatedAt ? 1 : -1));
 };

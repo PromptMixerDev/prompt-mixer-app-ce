@@ -15,6 +15,7 @@ import workflowReducer, { resetWorkflowState } from './workflow/workflowSlice';
 import variablesReducer, {
   resetVariablesState,
 } from './variables/variablesSlice';
+import aiToolsReducer, { resetAIToolsState } from './aiTools/aiToolsSlice';
 import selectedEntityReducer, {
   resetSelectedEntityState,
 } from './selectedEntity/selectedEntitySlice';
@@ -35,6 +36,7 @@ export const store = configureStore({
     workflow: workflowReducer,
     selectedEntity: selectedEntityReducer,
     flexLayoutModel: flexLayoutModelReducer,
+    aiTools: aiToolsReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -56,6 +58,7 @@ export const resetStore = (): void => {
   store.dispatch(resetWorkflowState());
   store.dispatch(resetSelectedEntityState());
   store.dispatch(resetWorkflowOutputsState());
+  store.dispatch(resetAIToolsState());
 };
 
 export type RootState = ReturnType<typeof store.getState>;

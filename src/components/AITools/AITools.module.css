@@ -1,0 +1,20 @@
+.aiTools {
+  padding-left: 36px;
+}
+
+.aiToolWrapper {
+  min-height: 34px;
+  padding: 4px 0;
+}
+
+.aiToolWrapper > textarea {
+  background-color: var(--backgrounds-secondary);
+}
+
+.addNewButton {
+  color: var(--lable-secondary);
+}
+
+.addNewButtonWrapper {
+  padding: 4px 0 24px 0;
+}
