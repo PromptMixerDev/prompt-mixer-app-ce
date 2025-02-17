@@ -45,6 +45,19 @@ The documentation provides comprehensive guides on:
 
 ## Installation
 
+### Download Latest Build
+
+Get the latest version of Prompt Mixer CE:
+
+[![macOS arm64](https://img.shields.io/badge/macOS_arm64-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.arm64.dmg)
+[![macOS Intel](https://img.shields.io/badge/macOS_Intel-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.x64.dmg)
+[![Windows](https://img.shields.io/badge/Windows-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer.0.2.8.exe)
+[![Linux](https://img.shields.io/badge/Linux-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.AppImage)
+
+Or visit our [releases page](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases) to see all available versions.
+
+### Development Setup
+
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
