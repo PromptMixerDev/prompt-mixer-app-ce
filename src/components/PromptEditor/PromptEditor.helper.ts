@@ -302,9 +302,15 @@ export const processModel = async (
     : {};
 
   const tools = aiTools
-    ?.filter((aiTool) => aiTool.Value)
-    ?.map((aiTool) => JSON.parse(aiTool.Value!));
-  console.log('tools', tools);
+    ?.map((aiTool) => {
+      try {
+        return JSON.parse(aiTool.Value!);
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    })
+    ?.filter(Boolean);
 
   const connectorSettings = await getConnectorSettings(
     db,

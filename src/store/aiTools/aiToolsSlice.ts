@@ -57,12 +57,32 @@ const aiToolsSlice = createSlice({
         state.aiTools[chainId].push(aiTool);
       }
     },
+    deleteAITool(
+      state,
+      action: PayloadAction<{
+        chainId: string;
+        aiTool: IAITool;
+      }>
+    ) {
+      const { chainId, aiTool } = action.payload;
+      if (!state.aiTools[chainId]) {
+        state.aiTools[chainId] = [];
+      }
+      state.aiTools[chainId] = state.aiTools[chainId].filter(
+        (tool) => tool.AIToolID !== aiTool.AIToolID
+      );
+    },
     resetAIToolsState() {
       return initialState;
     },
   },
 });
 
-export const { addAITools, addAITool, updateAITool, resetAIToolsState } =
-  aiToolsSlice.actions;
+export const {
+  addAITools,
+  addAITool,
+  updateAITool,
+  deleteAITool,
+  resetAIToolsState,
+} = aiToolsSlice.actions;
 export default aiToolsSlice.reducer;

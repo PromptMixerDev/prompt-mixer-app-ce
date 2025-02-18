@@ -1091,6 +1091,13 @@ export const updateAIToolInChain = async (
   });
 };
 
+export const deleteAIToolFromChain = async (
+  db: IDBWrapper,
+  tool: IAITool
+): Promise<void> => {
+  await db.delete(DBStores.aiTool, tool.AIToolID);
+};
+
 export const getAIToolsByChainId = async (
   db: IDBWrapper,
   chainId: string

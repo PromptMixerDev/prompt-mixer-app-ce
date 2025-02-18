@@ -1,11 +1,16 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
   addAIToolToChain,
+  deleteAIToolFromChain,
   IDBWrapper,
   updateAIToolInChain,
 } from 'db/workspaceDb';
 import { AppDispatch } from 'store/store';
-import { addAITool, updateAITool } from 'store/aiTools/aiToolsSlice';
+import {
+  addAITool,
+  deleteAITool,
+  updateAITool,
+} from 'store/aiTools/aiToolsSlice';
 import { IAITool } from './AITools';
 
 export const handleAIToolAdd = (
@@ -47,4 +52,32 @@ export const handleAIToolUpdate = (
   }
 
   dispatch(updateAITool({ chainId: chainId ?? tabId, aiTool: updatedAITool }));
+};
+
+export const handleAIToolDelete = (
+  db: IDBWrapper,
+  aiTool: IAITool,
+  dispatch: AppDispatch,
+  tabId: string,
+  chainId?: string
+): void => {
+  if (chainId) {
+    deleteAIToolFromChain(db, aiTool).catch((error) => {
+      console.error(error);
+    });
+  }
+
+  dispatch(deleteAITool({ chainId: chainId ?? tabId, aiTool }));
+};
+
+export const validateJSON = (value: string): string | null => {
+  try {
+    if (value) {
+      JSON.parse(value);
+    }
+    return null;
+  } catch (error) {
+    console.error(error);
+    return 'Invalid JSON';
+  }
 };

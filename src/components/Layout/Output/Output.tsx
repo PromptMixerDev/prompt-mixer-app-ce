@@ -40,7 +40,6 @@ export const Output: React.FC<OutputProps> = ({
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const activeStep = output.activeStep;
   const finishReason = output.Completions?.[activeStep]?.FinishReason;
-  console.log('finishReason', finishReason);
 
   const completionTime = getCompletionTime(output);
   const model = isChain

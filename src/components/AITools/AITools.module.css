@@ -3,12 +3,22 @@
 }
 
 .aiToolWrapper {
-  min-height: 34px;
+  display: flex;
   padding: 4px 0;
+  flex-grow: 1;
 }
 
-.aiToolWrapper > textarea {
+.aiTool {
+  flex-grow: 1;
+  padding-right: 4px;
+}
+
+.aiTool > textarea {
   background-color: var(--backgrounds-secondary);
+}
+
+.deleteButtonWrapper {
+  padding-top: 1px;
 }
 
 .addNewButton {
