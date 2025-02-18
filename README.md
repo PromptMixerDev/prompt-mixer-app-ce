@@ -1,11 +1,31 @@
-
 # Prompt Mixer CE
 
-Prompt Mixer CE is an open-source desktop application for testing and managing prompt chains. It provides a powerful environment for experimenting with AI-driven conversations and complex dialogues.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-0.2.8-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-releases)
+[![Node](https://img.shields.io/badge/node-%3E%3D%2016.0.0-brightgreen.svg)](https://nodejs.org)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-blue.svg)](https://www.typescriptlang.org/)
+[![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
+[![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)](package.json)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+
+<div align="center">
+
+---
+
+[![Sponsor Me](https://img.shields.io/badge/Sponsor-Stripe-blue?style=for-the-badge&logo=stripe)](https://buy.stripe.com/fZeaGW3q1b10deU9AF)
+
+---
+
+</div>
+
+Prompt Mixer is an open-source desktop application for testing and managing prompt chains. It provides a powerful environment for experimenting with AI-driven conversations and complex dialogues.
+
+![Prompt Mixer Interface](public/images/app-screenshot.png)
 
 ## Key Features
 
 - ⛓️ Prompt Chaining - Construct sequences of prompts that pass context and information to enable complex dialogues.
+- 🔄 Workflows - Create sophisticated analysis chains using an intuitive form-based interface to build multi-step prompt workflows.
 - 🔀 Extensibility - Bring in custom models and leverage third-party APIs via connectors.
 - 🧪 Testing & Validation - Continuously experiment with and evaluate prompts before putting them into production.
 
@@ -24,6 +44,19 @@ The documentation provides comprehensive guides on:
 - and more!
 
 ## Installation
+
+### Download Latest Build
+
+Get the latest version of Prompt Mixer CE:
+
+[![macOS arm64](https://img.shields.io/badge/macOS_arm64-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.arm64.dmg)
+[![macOS Intel](https://img.shields.io/badge/macOS_Intel-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.x64.dmg)
+[![Windows](https://img.shields.io/badge/Windows-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer.0.2.8.exe)
+[![Linux](https://img.shields.io/badge/Linux-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.AppImage)
+
+Or visit our [releases page](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases) to see all available versions.
+
+### Development Setup
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
