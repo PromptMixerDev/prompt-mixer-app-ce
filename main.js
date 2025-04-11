@@ -190,32 +190,17 @@ async function runConnector(connectorFolderPath, model, prompts, properties, set
 
 ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
   const installedConnectors = await getInstalledConnectors();
-
-  if (!savedSettings) {
-    event.reply('installed-connectors', installedConnectors);
-  }
-
   try {
     let updatedConnectors = [];
-    if (installedConnectors && savedSettings) {
-      installedConnectors?.forEach((connector) => {
-        const settingForConnector = savedSettings.find((savedSetting) => {
-          if (connector.settings.length === 0 ) {
-            return false;
-          }
-            
-          return savedSetting.ConnectorFolder === connector.connectorFolder;
-        });
-
-        if (settingForConnector) {
-          updatedConnectors.push(
-            callGetDynamicModelList(connector, settingForConnector)
-          );
-        } else {
-          updatedConnectors.push(connector);
-        }
+    installedConnectors?.forEach((connector) => {
+      const settingForConnector = savedSettings.find((savedSetting) => {
+        return savedSetting.ConnectorFolder === connector.connectorFolder;
       });
-    }
+        
+      updatedConnectors.push(
+        callGetDynamicModelList(connector, settingForConnector)
+      );
+    });
 
     try {
       const res = await Promise.all(updatedConnectors);
@@ -282,20 +267,14 @@ async function callGetDynamicModelList(connector, savedSettings) {
     const plugin = await import(connectorUrl);
 
     if (hasGetDynamicModelList(plugin)) {
-      const hasUserSettings = savedSettings.Settings?.every((setting) => {
-        return !!setting?.Value;
-      });
-
-      if (hasUserSettings) {
         try {
           const models = await plugin.getDynamicModelList(
-            savedSettings.Settings
+            savedSettings?.Settings
           );
           connector.models = models;
         } catch (error) {
-          console.log("Can't call getDynamicModelList from connector");
+          console.log("Can't call getDynamicModelList from connector:", error);
         }
-      }
     }
 
     return connector;
