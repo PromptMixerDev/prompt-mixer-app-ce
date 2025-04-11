@@ -269,7 +269,7 @@ async function callGetDynamicModelList(connector, savedSettings) {
     if (hasGetDynamicModelList(plugin)) {
         try {
           const models = await plugin.getDynamicModelList(
-            savedSettings?.Settings
+            savedSettings?.Settings ?? []
           );
           connector.models = models;
         } catch (error) {
