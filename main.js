@@ -221,6 +221,7 @@ ipcMain.on('run-connector-script', async (event, connector, prompts, properties,
         await fs.promises.stat(connectorPath);
         // If fs.stat does not throw, the file exists, so run the connector
         const res = await runConnector(connector.ConnectorFolder, connector.Model, prompts, properties, settings);
+        
         event.reply('connector-output', outputId, connector.Model, res, workflow);
     } catch (error) {
         // If fs.stat throws an error, the file does not exist or another error occurred

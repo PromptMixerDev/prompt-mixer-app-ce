@@ -1,3 +1,7 @@
+.container {
+  width: 100%;
+}
+
 .wrapper {
   display: flex;
   align-items: center;
@@ -39,4 +43,15 @@
 
 .input:focus {
   outline: 1px solid var(--system-link);
+}
+
+.inputError {
+  border: 1px solid var(--lable-danger);
+}
+
+.errorMessage {
+  padding-left: 194px;
+  color: var(--lable-danger);
+  font-size: var(--font-size-small);
+  margin-top: 4px;
 }

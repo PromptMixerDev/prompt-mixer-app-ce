@@ -21,12 +21,14 @@ import { selectPromptItemsByChainId } from 'store/prompts/promptsSelectors';
 import { addPromptItems } from 'store/prompts/promptsSlice';
 import { selectVariablesByChainId } from 'store/variables/variablesSelectors';
 import { updateVariables } from 'store/variables/variablesSlice';
+import { selectAIToolsByChainId } from 'store/aiTools/aiToolsSelectors';
 import {
   createAndSetChain,
   getDefaultModel,
   getDefaultPrompt,
   handleRunModel,
   isRunButtonDisabled,
+  readAndSetAITools,
   readAndSetChainModels,
   readAndSetPrompts,
   readAndSetVariables,
@@ -34,6 +36,7 @@ import {
 import { Button, ButtonColor, ButtonSize, ButtonTypes } from '../Button';
 import { ModelsSelector } from '../ModelsSelector';
 import { AccordionSection } from '../AccordionSection';
+import { AITools } from '../AITools';
 import { EditorArea } from './EditorArea';
 import { ChainTitle } from './ChainTitle';
 import { InputProperty } from '../ModelsSelector/ModelProperties/InputProperty';
@@ -63,6 +66,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
     (state) => state.flexLayoutModel
   );
   const models = useAppSelector(selectModelsByChainId(chainId ?? tabId));
+  const aiTools = useAppSelector(selectAIToolsByChainId(chainId ?? tabId));
   const variables = useAppSelector(selectVariablesByChainId(chainId ?? tabId));
   const { runningModels } = useAppSelector((state) => state.model);
   const promptItems = useAppSelector(
@@ -82,6 +86,8 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
       readAndSetChainModels(db, chainId, dispatch);
       readAndSetPrompts(db, chainId, dispatch);
       readAndSetVariables(db, chainId, dispatch);
+      readAndSetAITools(db, chainId, dispatch);
+
       dispatch(
         setSelectedEntity({
           selectedEntityId: chainId,
@@ -108,7 +114,14 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
   }, []);
 
   const handleCreateChainModel = async (): Promise<string> => {
-    await createAndSetChain(db, tabId, models, flexLayoutModel, dispatch);
+    await createAndSetChain(
+      db,
+      tabId,
+      models,
+      aiTools,
+      flexLayoutModel,
+      dispatch
+    );
     return tabId;
   };
 
@@ -121,6 +134,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
       dispatch,
       send,
       variables,
+      aiTools,
       flexLayoutModel,
     });
   };
@@ -182,6 +196,7 @@ export const PromptEditor: React.FC<PromptEditorProps> = ({
             </div>
           </AccordionSection>
         )}
+        <AITools tabId={tabId} chainId={chainId} />
         <AccordionSection
           title={DICTIONARY.labels.chain}
           showArrowButton={false}

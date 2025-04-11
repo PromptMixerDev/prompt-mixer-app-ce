@@ -67,6 +67,7 @@ export const DICTIONARY = {
     prompts: 'Prompts',
     datasets: 'Datasets',
     text: 'Text',
+    tools: 'Tools',
   },
   settingsOptions: {
     appSettings: 'App settings',
