@@ -1,5 +1,6 @@
 .aiTools {
   padding-left: 36px;
+  padding-bottom: 18px;
 }
 
 .aiToolWrapper {
@@ -26,5 +27,5 @@
 }
 
 .addNewButtonWrapper {
-  padding: 4px 0 24px 0;
+  padding: 4px 0 6px 0;
 }

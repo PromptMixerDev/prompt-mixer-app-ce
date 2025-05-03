@@ -40,6 +40,9 @@ export const Output: React.FC<OutputProps> = ({
   const contentWrapperRef = useRef<HTMLDivElement>(null);
   const activeStep = output.activeStep;
   const finishReason = output.Completions?.[activeStep]?.FinishReason;
+  const isShowVersions =
+    isChain &&
+    (output as OutputType).PromptVersions.length === output.Completions.length;
 
   const completionTime = getCompletionTime(output);
   const model = isChain
@@ -120,7 +123,7 @@ export const Output: React.FC<OutputProps> = ({
                   onClick={() => onClick(ind)}
                   buttonClass={`${styles.stepButton} ${ind === activeStep ? styles.activeStepButton : ''}`}
                 >
-                  {isChain
+                  {isShowVersions
                     ? `${(output as OutputType).PromptVersions[ind][0]} v.${(output as OutputType).PromptVersions[ind][1]}`
                     : ind + 1}
                 </Button>

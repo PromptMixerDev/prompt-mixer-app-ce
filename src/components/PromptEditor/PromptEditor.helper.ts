@@ -322,7 +322,7 @@ export const processModel = async (
   return {
     properties: {
       ...properties,
-      tools: tools?.length ? tools : undefined,
+      tools: tools?.[0],
     },
     settings,
   };

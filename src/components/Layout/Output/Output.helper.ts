@@ -34,12 +34,17 @@ export const handleUpdateOutput = (
 ): void => {
   updateOutput(db, outputId, {
     ...value,
+
     Loading: false,
     CompletedAt: new Date(),
   })
     .then((output: Output) => {
       dispatch(
-        updateReduxOutput({ chainId: output.ChainID, id: outputId, output })
+        updateReduxOutput({
+          chainId: output.ChainID,
+          id: outputId,
+          output: { ...output, activeStep: output.Completions.length - 1 },
+        })
       );
       dispatch(removeRunningModel({ id: output.ChainID, model }));
     })

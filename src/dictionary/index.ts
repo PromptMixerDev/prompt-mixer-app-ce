@@ -1,5 +1,6 @@
 export const DICTIONARY = {
   labels: {
+    add: 'Add',
     tokens: 'T',
     delete: 'Delete',
     duplicate: 'Duplicate',
@@ -68,6 +69,8 @@ export const DICTIONARY = {
     datasets: 'Datasets',
     text: 'Text',
     tools: 'Tools',
+    mcp: 'MCP',
+    mcpConfig: 'MCP config',
   },
   settingsOptions: {
     appSettings: 'App settings',
@@ -92,6 +95,8 @@ export const DICTIONARY = {
     acmeInc: 'Acme Inc.',
     searchOrTextExpression: 'Search or text expression',
     typeToSearch: 'Type to search...',
+    mcpConfig:
+      '{\n    "mcpServers": {\n        "mcp-compass": {\n            "command": "npx",\n            "args": [\n                 "-y",\n                 "@liuyoshio/mcp-compass"\n             ]\n        }\n    }\n}',
   },
   questions: {
     areYouWantToDeleteChain:

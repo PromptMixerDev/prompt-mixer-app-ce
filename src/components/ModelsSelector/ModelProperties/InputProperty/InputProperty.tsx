@@ -17,6 +17,7 @@ interface IProperty {
 interface InputPropertyProps {
   index: number;
   property: IProperty;
+  placeholder?: string;
   onChange: (key: number, newValue: string) => void;
   wrapperClass?: string;
   labelClass?: string;
@@ -28,6 +29,7 @@ interface InputPropertyProps {
 export const InputProperty: React.FC<InputPropertyProps> = ({
   index,
   property,
+  placeholder,
   onChange,
   wrapperClass,
   labelClass,
@@ -73,6 +75,7 @@ export const InputProperty: React.FC<InputPropertyProps> = ({
           className={classnames(styles.input, inputClass, {
             [styles.inputError]: error,
           })}
+          placeholder={placeholder}
           value={inputValue}
           onChange={handleChange}
           onBlur={handleBlur}

@@ -45,17 +45,18 @@ export const AITools: React.FC<AIToolsProps> = ({ chainId, tabId }) => {
   };
 
   return (
-    <AccordionSection title={DICTIONARY.labels.tools}>
+    <AccordionSection title={DICTIONARY.labels.mcp}>
       <div className={styles.aiTools}>
         {aiTools.map((aiTool, ind) => (
           <div className={styles.aiToolWrapper} key={aiTool.AIToolID}>
             <InputProperty
               index={ind}
-              property={aiTool}
+              property={{ ...aiTool, Name: DICTIONARY.labels.mcpConfig }}
               onChange={(_ind, newValue) => onAIToolUpdate(newValue, aiTool)}
               wrapperClass={styles.aiTool}
               icon={FormulaIcon}
               validate={validateJSON}
+              placeholder={DICTIONARY.placeholders.mcpConfig}
             />
             <Button
               type={ButtonTypes.icon}
@@ -66,15 +67,17 @@ export const AITools: React.FC<AIToolsProps> = ({ chainId, tabId }) => {
             </Button>
           </div>
         ))}
-        <Button
-          type={ButtonTypes.iconText}
-          buttonClass={styles.addNewButton}
-          buttonWrapperClass={styles.addNewButtonWrapper}
-          onClick={onAIToolAdd}
-        >
-          <AddIcon />
-          <span>{DICTIONARY.labels.addNew}</span>
-        </Button>
+        {aiTools.length === 0 && (
+          <Button
+            type={ButtonTypes.iconText}
+            buttonClass={styles.addNewButton}
+            buttonWrapperClass={styles.addNewButtonWrapper}
+            onClick={onAIToolAdd}
+          >
+            <AddIcon />
+            <span>{DICTIONARY.labels.add}</span>
+          </Button>
+        )}
       </div>
     </AccordionSection>
   );
