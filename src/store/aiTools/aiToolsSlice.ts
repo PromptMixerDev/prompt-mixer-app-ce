@@ -2,11 +2,11 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { IAITool } from 'components/AITools';
 import { AITool } from 'db/workspaceDb';
 
-interface aiToolsState {
+interface AIToolsState {
   aiTools: Record<string, IAITool[]>;
 }
 
-const initialState: aiToolsState = {
+const initialState: AIToolsState = {
   aiTools: {},
 };
 

@@ -319,10 +319,12 @@ export const processModel = async (
   const settings: Record<string, unknown> = connectorSettings
     ? normalizeSettings(connectorSettings.Settings)
     : {};
+
+  const mcpConfig = tools?.[0];
   return {
     properties: {
       ...properties,
-      tools: tools?.[0],
+      tools: mcpConfig,
     },
     settings,
   };
