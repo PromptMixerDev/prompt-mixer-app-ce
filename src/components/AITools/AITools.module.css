@@ -1,0 +1,31 @@
+.aiTools {
+  padding-left: 36px;
+  padding-bottom: 18px;
+}
+
+.aiToolWrapper {
+  display: flex;
+  padding: 4px 0;
+  flex-grow: 1;
+}
+
+.aiTool {
+  flex-grow: 1;
+  padding-right: 4px;
+}
+
+.aiTool > textarea {
+  background-color: var(--backgrounds-secondary);
+}
+
+.deleteButtonWrapper {
+  padding-top: 1px;
+}
+
+.addNewButton {
+  color: var(--lable-secondary);
+}
+
+.addNewButtonWrapper {
+  padding: 4px 0 6px 0;
+}

@@ -39,6 +39,7 @@ export interface Completion {
   Error: string | undefined;
   Content: string | null;
   TokenUsage: number | undefined;
+  FinishReason?: string;
 }
 
 export interface Property {
@@ -75,6 +76,7 @@ export interface WorkflowCompletion {
   Properties?: Property[];
   ChainName: string;
   ChainID: string;
+  FinishReason?: string;
 }
 
 export interface WorkflowOutput {
@@ -147,6 +149,15 @@ export interface Workflow {
   UpdatedAt?: Date;
 }
 
+export interface AITool {
+  AIToolID: string;
+  ChainID: string;
+  Name: string;
+  Value?: string;
+  CreatedAt: Date;
+  UpdatedAt?: Date;
+}
+
 enum ChangeLogActions {
   CREATE = 'create',
   UPDATE = 'update',
@@ -173,7 +184,8 @@ export type DBValue =
   | Variable
   | Workflow
   | WorkflowOutput
-  | ChangeLogItem;
+  | ChangeLogItem
+  | AITool;
 
 export interface PromptMixerDBSchema extends DBSchema {
   ChainCollection: {
@@ -233,6 +245,11 @@ export interface PromptMixerDBSchema extends DBSchema {
     value: WorkflowOutput;
     indexes: { WorkflowID: string };
   };
+  AITool: {
+    key: string;
+    value: AITool;
+    indexes: { ChainID: string };
+  };
 }
 
 export enum DBStores {
@@ -248,6 +265,7 @@ export enum DBStores {
   workflow = 'Workflow',
   changeLogItem = 'ChangeLogItem',
   workflowOutput = 'WorkflowOutput',
+  aiTool = 'AITool',
 }
 
 export enum DBKeyPathes {
@@ -264,6 +282,7 @@ export enum DBKeyPathes {
   workflowID = 'WorkflowID',
   title = 'Title',
   content = 'Content',
+  aiToolID = 'AIToolID',
 }
 
 export interface DBConfig {

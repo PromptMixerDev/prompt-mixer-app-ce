@@ -49,7 +49,7 @@ const outputsSlice = createSlice({
       const { chainId, outputs } = action.payload;
       state.outputs[chainId] = outputs.map((output) => ({
         ...output,
-        activeStep: output.PromptVersions?.length - 1,
+        activeStep: output.Completions?.length - 1,
       }));
     },
     addOutput(

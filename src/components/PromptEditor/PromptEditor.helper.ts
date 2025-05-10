@@ -16,6 +16,9 @@ import {
   getDatasetById,
   type Variable,
   getVariablesByChainId,
+  getAIToolsByChainId,
+  type AITool,
+  addAIToolToChain,
 } from 'db/workspaceDb';
 import { type AppDispatch } from 'store/store';
 import {
@@ -33,6 +36,7 @@ import {
   addPromptItems,
 } from 'store/prompts/promptsSlice';
 import { addVariables } from 'store/variables/variablesSlice';
+import { addAITools } from 'store/aiTools/aiToolsSlice';
 import { type IModel } from '../ModelsSelector';
 import { type DefaultPromptItem, type IPromptItem } from './PromptEditor';
 import { getTree } from '../Tree/Tree.helper';
@@ -53,6 +57,7 @@ import {
   extractVariableName,
   variablePatternGlobal,
 } from './EditorArea/EditorArea.helper';
+import { IAITool } from '../AITools';
 
 export const getDefaultModel = (chainId?: string): IModel => ({
   ChainModelID: uuidv4(),
@@ -169,12 +174,14 @@ export const createAndSetChain = async (
   db: IDBWrapper,
   tabId: string,
   models: Array<ChainModel | IModel>,
+  aiTools: IAITool[],
   flexLayoutModel: Model,
   dispatch: AppDispatch
 ): Promise<void> =>
   await createNewChain(db, { ChainID: tabId })
     .then((chainId) => {
       createModels(db, models, chainId);
+      createAITools(db, aiTools, chainId);
       updateTabAttributes(
         chainId,
         {
@@ -284,7 +291,8 @@ export const processPrompts = async (
 
 export const processModel = async (
   db: IDBWrapper,
-  selectedModel: ModelType
+  selectedModel: ModelType,
+  aiTools?: IAITool[]
 ): Promise<{
   properties: Record<string, unknown>;
   settings: Record<string, unknown>;
@@ -292,6 +300,18 @@ export const processModel = async (
   const properties: Record<string, unknown> = selectedModel.Properties
     ? normalizeProperties(selectedModel.Properties)
     : {};
+
+  const tools = aiTools
+    ?.map((aiTool) => {
+      try {
+        return JSON.parse(aiTool.Value!);
+      } catch (error) {
+        console.error(error);
+        return null;
+      }
+    })
+    ?.filter(Boolean);
+
   const connectorSettings = await getConnectorSettings(
     db,
     selectedModel.ConnectorFolder!
@@ -299,8 +319,13 @@ export const processModel = async (
   const settings: Record<string, unknown> = connectorSettings
     ? normalizeSettings(connectorSettings.Settings)
     : {};
+
+  const mcpConfig = tools?.[0];
   return {
-    properties,
+    properties: {
+      ...properties,
+      tools: mcpConfig,
+    },
     settings,
   };
 };
@@ -326,6 +351,7 @@ export const handleRunModel = async ({
   dispatch,
   send,
   variables,
+  aiTools,
   flexLayoutModel,
 }: {
   db: IDBWrapper;
@@ -335,6 +361,7 @@ export const handleRunModel = async ({
   dispatch: AppDispatch;
   send: (channel: string, ...args: any[]) => void;
   variables: Variable[];
+  aiTools: IAITool[];
   flexLayoutModel: Model;
 }): Promise<void> => {
   try {
@@ -348,7 +375,11 @@ export const handleRunModel = async ({
       } = await processPrompts(db, promptItems, variables, models);
 
       for (const selectedModel of selectedModels) {
-        const { properties, settings } = await processModel(db, selectedModel);
+        const { properties, settings } = await processModel(
+          db,
+          selectedModel,
+          aiTools
+        );
 
         for (let i = 0; i < maxDataLength; i++) {
           const replacedPromptContents = processDatasets(
@@ -406,3 +437,30 @@ export const readAndSetVariables = (
       console.error(error);
     });
 };
+
+export const readAndSetAITools = (
+  db: IDBWrapper,
+  chainId: string,
+  dispatch: AppDispatch
+): void => {
+  getAIToolsByChainId(db, chainId)
+    .then((aiTools: AITool[]) => {
+      dispatch(addAITools({ chainId, aiTools }));
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+};
+
+export const createAITools = (
+  db: IDBWrapper,
+  aiTools: IAITool[],
+  chainId: string
+): void =>
+  aiTools
+    .map((aiTool) => ({ ...aiTool, ChainID: chainId }))
+    .forEach((aiTool) => {
+      addAIToolToChain(db, aiTool).catch((error) => {
+        console.error(error);
+      });
+    });
