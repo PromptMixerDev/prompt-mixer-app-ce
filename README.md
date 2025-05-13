@@ -1,7 +1,7 @@
 # Prompt Mixer CE
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-0.2.8-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-releases)
+[![Version](https://img.shields.io/badge/version-0.2.9-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-releases)
 [![Node](https://img.shields.io/badge/node-%3E%3D%2016.0.0-brightgreen.svg)](https://nodejs.org)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.5.4-blue.svg)](https://www.typescriptlang.org/)
 [![Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io/)
@@ -49,10 +49,10 @@ The documentation provides comprehensive guides on:
 
 Get the latest version of Prompt Mixer CE:
 
-[![macOS arm64](https://img.shields.io/badge/macOS_arm64-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.arm64.dmg)
-[![macOS Intel](https://img.shields.io/badge/macOS_Intel-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.x64.dmg)
-[![Windows](https://img.shields.io/badge/Windows-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer.0.2.8.exe)
-[![Linux](https://img.shields.io/badge/Linux-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.8/PromptMixer-0.2.8.AppImage)
+[![macOS arm64](https://img.shields.io/badge/macOS_arm64-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.9/PromptMixer-0.2.9.arm64.dmg)
+[![macOS Intel](https://img.shields.io/badge/macOS_Intel-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.9/PromptMixer-0.2.9.x64.dmg)
+[![Windows](https://img.shields.io/badge/Windows-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.9/PromptMixer.0.2.9.exe)
+[![Linux](https://img.shields.io/badge/Linux-Download-blue.svg)](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases/download/v0.2.9/PromptMixer-0.2.9.AppImage)
 
 Or visit our [releases page](https://github.com/PromptMixerDev/prompt-mixer-app-ce/releases) to see all available versions.
 
