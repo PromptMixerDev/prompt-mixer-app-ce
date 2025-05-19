@@ -3761,14 +3761,14 @@
   dependencies:
     "@types/node" "^20.1.0"
 
-"@wdio/reporter@9.5.0":
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-9.5.0.tgz#f7577d31a1b38f70d4dc3414c1831c6e78b8f5eb"
-  integrity sha512-ycdbU97tDT7RCgutM+fSwbd0FIab821BAc0hYopCkB0FIooHUjIjvXmh0QichasS5a21tGe0UXfCcnn1S6V6Fw==
+"@wdio/reporter@9.14.0":
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/@wdio/reporter/-/reporter-9.14.0.tgz#59d8171e9acf0ab1a1bae3e35f0ad6b9c6ca0109"
+  integrity sha512-/l1CrQ4q30ysBHoZOH1EOg8LZ2+AmrDdQdNhec5mjHT6p0/c6K4QeRHY/Ayh0hU27zR9Lj0tCoWjpmPgAqWI8g==
   dependencies:
     "@types/node" "^20.1.0"
     "@wdio/logger" "9.4.4"
-    "@wdio/types" "9.5.0"
+    "@wdio/types" "9.14.0"
     diff "^7.0.0"
     object-inspect "^1.12.0"
 
@@ -3788,13 +3788,13 @@
     webdriver "9.2.8"
     webdriverio "9.2.14"
 
-"@wdio/spec-reporter@9.5.0":
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-9.5.0.tgz#b8a746fd3c6d2a19328f1df9403365028ccd0b55"
-  integrity sha512-xapzWIPZE8E5IHQdhIESJ9u10fZMWi91D0Hu3EiyDvZ6ClJR6LIS/eeGChXVx3+x/OeU6yiOwhmkV4mCUyFeNA==
+"@wdio/spec-reporter@9.14.0":
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/@wdio/spec-reporter/-/spec-reporter-9.14.0.tgz#0fc489748b465d5cb251004c35a4ca2bbf341b6f"
+  integrity sha512-k9uFEn/SHQCmPMn5DlcUdCLlCwyWodaLECr7YLpkfdywuwrBLrB7R8YME7g63lSQzH3CAzLzPhgMiokQWLUu4w==
   dependencies:
-    "@wdio/reporter" "9.5.0"
-    "@wdio/types" "9.5.0"
+    "@wdio/reporter" "9.14.0"
+    "@wdio/types" "9.14.0"
     chalk "^5.1.2"
     easy-table "^1.2.0"
     pretty-ms "^9.0.0"
@@ -3803,6 +3803,13 @@
   version "9.12.3"
   resolved "https://registry.yarnpkg.com/@wdio/types/-/types-9.12.3.tgz#b8c7491bd65f9b451ccf58d33061bc14df111340"
   integrity sha512-MlnQ3WG1CQAjmUmeKtv3timGR91hSsCwQW9T1kqpu0VaJ/qbw3sWgtArMqRvgWB2H6IGueqQwDQ9qHlP013w9Q==
+  dependencies:
+    "@types/node" "^20.1.0"
+
+"@wdio/types@9.14.0":
+  version "9.14.0"
+  resolved "https://registry.yarnpkg.com/@wdio/types/-/types-9.14.0.tgz#50bde9f364d6b196d7d27edacf6825cee6241855"
+  integrity sha512-Zqc4sxaQLIXdI1EHItIuVIOn7LvPmDvl9JEANwiJ35ck82Xlj+X55Gd9NtELSwChzKgODD0OBzlLgXyxTr69KA==
   dependencies:
     "@types/node" "^20.1.0"
 
