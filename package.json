@@ -51,7 +51,7 @@
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.32.0",
     "@wdio/cli": "9.5.1",
-    "@wdio/cucumber-framework": "9.5.0",
+    "@wdio/cucumber-framework": "9.15.0",
     "@wdio/local-runner": "9.2.15",
     "@wdio/spec-reporter": "9.15.0",
     "concurrently": "^9.1.2",
