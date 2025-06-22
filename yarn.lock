@@ -3626,18 +3626,18 @@
     glob "^10.2.2"
     import-meta-resolve "^4.0.0"
 
-"@wdio/cucumber-framework@9.5.0":
-  version "9.5.0"
-  resolved "https://registry.yarnpkg.com/@wdio/cucumber-framework/-/cucumber-framework-9.5.0.tgz#95f727342f01111559213330a99678ba68f60b6f"
-  integrity sha512-KjGWxnCjtiTQfKYetQkBtLXF46WfAS57K9w5HbKZ1qaw2Tg2dhYM94TIBWYOFrIqh/xQfgXoDFaVGJkVQ5HG6A==
+"@wdio/cucumber-framework@9.15.0":
+  version "9.15.0"
+  resolved "https://registry.yarnpkg.com/@wdio/cucumber-framework/-/cucumber-framework-9.15.0.tgz#4ec73a5433d2fb710c664841cdc45fac19fb7d5d"
+  integrity sha512-PCa0SOYNwBEfd1A0FUQUKoHG1freJwsGr9Rwt/ncwL8Cp6qLqiIV3tTKiw3cY3ObFe+bTbeQDVQnHOlr/4IB6A==
   dependencies:
     "@cucumber/cucumber" "^10.3.1"
     "@cucumber/gherkin" "29.0.0"
     "@cucumber/messages" "26.0.1"
     "@types/node" "^20.1.0"
-    "@wdio/logger" "9.4.4"
-    "@wdio/types" "9.5.0"
-    "@wdio/utils" "9.5.0"
+    "@wdio/logger" "9.15.0"
+    "@wdio/types" "9.15.0"
+    "@wdio/utils" "9.15.0"
     glob "^10.2.2"
     import-meta-resolve "^4.1.0"
     is-glob "^4.0.0"
@@ -3712,7 +3712,7 @@
     loglevel-plugin-prefix "^0.8.4"
     strip-ansi "^7.1.0"
 
-"@wdio/logger@9.15.0":
+"@wdio/logger@9.15.0", "@wdio/logger@^9.0.0", "@wdio/logger@^9.1.3", "@wdio/logger@^9.4.4":
   version "9.15.0"
   resolved "https://registry.yarnpkg.com/@wdio/logger/-/logger-9.15.0.tgz#bf25211f8a44414ad2f0dd8a9794a543153502c1"
   integrity sha512-3IkaissyOsUQwg8IinkVm1svsvRMGJpFyaSiEhQ0oQXD7mnWrNVFSU9kmeFvbKAtoc4j60FRjU6XqtH94xRceg==
@@ -3722,7 +3722,7 @@
     loglevel-plugin-prefix "^0.8.4"
     strip-ansi "^7.1.0"
 
-"@wdio/logger@9.4.4", "@wdio/logger@^9.0.0", "@wdio/logger@^9.1.3", "@wdio/logger@^9.4.4":
+"@wdio/logger@9.4.4":
   version "9.4.4"
   resolved "https://registry.yarnpkg.com/@wdio/logger/-/logger-9.4.4.tgz#e4851256a076e2b9401f45caaa7a34d6f0278d4a"
   integrity sha512-BXx8RXFUW2M4dcO6t5Le95Hi2ZkTQBRsvBQqLekT2rZ6Xmw8ZKZBPf0FptnoftFGg6dYmwnDidYv/0+4PiHjpQ==
@@ -3845,6 +3845,25 @@
     "@puppeteer/browsers" "^2.2.0"
     "@wdio/logger" "9.4.4"
     "@wdio/types" "9.12.3"
+    decamelize "^6.0.0"
+    deepmerge-ts "^7.0.3"
+    edgedriver "^6.1.1"
+    geckodriver "^5.0.0"
+    get-port "^7.0.0"
+    import-meta-resolve "^4.0.0"
+    locate-app "^2.2.24"
+    safaridriver "^1.0.0"
+    split2 "^4.2.0"
+    wait-port "^1.1.0"
+
+"@wdio/utils@9.15.0":
+  version "9.15.0"
+  resolved "https://registry.yarnpkg.com/@wdio/utils/-/utils-9.15.0.tgz#8e6a9e5609a7bbcdb346e1ffae724aa4089f4cb8"
+  integrity sha512-XuT1PE1nh4wwJfQW6IN4UT6+iv0+Yf4zhgMh5et04OX6tfrIXkWdx2SDimghDtRukp9i85DvIGWjdPEoQFQdaA==
+  dependencies:
+    "@puppeteer/browsers" "^2.2.0"
+    "@wdio/logger" "9.15.0"
+    "@wdio/types" "9.15.0"
     decamelize "^6.0.0"
     deepmerge-ts "^7.0.3"
     edgedriver "^6.1.1"
