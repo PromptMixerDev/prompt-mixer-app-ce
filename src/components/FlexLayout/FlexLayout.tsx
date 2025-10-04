@@ -21,7 +21,7 @@ import {
   updateConnector,
 } from 'store/connectors/connectorsSlice';
 import { type IWorkflow } from 'store/workflow/workflowSlice';
-import { handleTabDrag, onModelChange, tabRender } from './FlexLayout.helper';
+import { onModelChange, tabRender } from './FlexLayout.helper';
 import { LayoutComponents } from './FlexLayout.config';
 import { Tree } from '../Tree';
 import { PromptEditor } from '../PromptEditor';
@@ -227,10 +227,8 @@ export const FlexLayout: React.FC<FlexLayoutProps> = ({
           <Layout
             model={flexLayoutModel}
             factory={factory}
-            font={{ size: '24px' }}
             onModelChange={modelChangeHandler}
             onRenderTab={tabRender(styles as Record<string, string>)}
-            onTabDrag={handleTabDrag}
           />
         </div>
       ) : (

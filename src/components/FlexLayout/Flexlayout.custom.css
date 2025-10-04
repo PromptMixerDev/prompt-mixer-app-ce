@@ -2,6 +2,11 @@
   color: var(--lable-primary);
 }
 
+.flexlayout__layout {
+  --font-size: 24px;
+  --font-family: var(--font-family-primary, Roboto, Arial, sans-serif);
+}
+
 .flexlayout__tabset {
   font-family: var(--font-family-primary);
   background-color: transparent;

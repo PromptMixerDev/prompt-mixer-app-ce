@@ -26,7 +26,7 @@ import Modal from '../Modals/Modal/Modal';
 import { CreateWorkspaceForm } from '../Forms/CreateWorkspaceForm';
 import { WorkspaceImage } from '../Forms/CreateWorkspaceForm/WorkspaceImage';
 import { AlignValues } from '../Modals/ContextMenu';
-import { MIN_WIDTH } from '../FlexLayout/FlexLayout.config';
+import { SIDE_BAR, SIDE_BAR_WEIGHT } from '../FlexLayout/FlexLayout.config';
 import {
   getAdditionalSearchOptions,
   getContextMenuOptions,
@@ -80,7 +80,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
     splitter: null,
     flexlayout: null,
   });
-  const [sideBarWidth, setSideBarWidth] = useState<number>(MIN_WIDTH);
+  const [sideBarWeight, setSideBarWeight] = useState<number>(SIDE_BAR_WEIGHT);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<Modals | null>(null);
   const [contextMenuVisible, setContextMenuVisible] = useState(false);
@@ -96,9 +96,9 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   const [searchFieldKey, setSearchFieldKey] = useState<string>(uuidv4());
 
   useEffect(() => {
-    const splitterElement = document.querySelector<HTMLElement>(
-      '[data-layout-path="/s0"]'
-    );
+    const splitterElement =
+      document.querySelector<HTMLElement>('[data-layout-path="/s0"]') ??
+      document.querySelector<HTMLElement>('[data-layout-path$="/s0"]');
     const flexlayoutElement = document.querySelector<HTMLElement>(
       '.flexlayout__layout'
     );
@@ -112,6 +112,15 @@ export const TitleBar: React.FC<TitleBarProps> = ({
       handleSideBarElements(isOpen, elements);
     }
   }, [sideBarReady]);
+
+  useEffect(() => {
+    const sideBarNode = model.getNodeById(SIDE_BAR) as any;
+    const currentWeight = sideBarNode?.getWeight?.();
+
+    if (typeof currentWeight === 'number' && currentWeight > 0.001) {
+      setSideBarWeight(currentWeight);
+    }
+  }, [model]);
 
   const handleCreateWorkspaceClick = (): void => {
     setModalContent(Modals.CREATE_WORKSPACE);
@@ -142,13 +151,7 @@ export const TitleBar: React.FC<TitleBarProps> = ({
   };
 
   const handleToggleSideBar = (): void => {
-    toggleSideBar(
-      sideBarRef,
-      sideBarWidth,
-      setSideBarWidth,
-      sideBarElements,
-      model
-    );
+    toggleSideBar(sideBarWeight, setSideBarWeight, sideBarElements, model);
   };
 
   const clearSearchOptions = (): void => {

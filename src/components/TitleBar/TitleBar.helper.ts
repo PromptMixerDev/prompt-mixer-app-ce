@@ -17,7 +17,13 @@ import {
   addNewTabsHandler,
   updateTabAttributes,
 } from '../FlexLayout/FlexLayout.helper';
-import { SIDE_BAR, SPLITTER_SIZE } from '../FlexLayout/FlexLayout.config';
+import {
+  LIBRARY_TABSET_ID,
+  MIN_WIDTH,
+  SIDE_BAR,
+  SIDE_BAR_WEIGHT,
+  SPLITTER_SIZE,
+} from '../FlexLayout/FlexLayout.config';
 import { type SideBarElements } from './TitleBar';
 import { type ContextMenuOption } from '../Modals/ContextMenuWithOptions';
 
@@ -41,23 +47,31 @@ export const handleSideBarElements = (
 };
 
 export const toggleSideBar = (
-  sideBarRef: React.RefObject<HTMLDivElement>,
-  sideBarWidth: number,
-  setSideBarWidth: (value: number) => void,
+  sideBarWeight: number,
+  setSideBarWeight: (value: number) => void,
   sideBarElements: SideBarElements,
   model: Model
 ): void => {
-  const width = sideBarRef.current?.clientWidth;
-  if (width! > 0) {
-    setSideBarWidth(width!);
-    updateTabAttributes(SIDE_BAR, { width: 0, height: 0 }, model);
+  const sideBarNode = model.getNodeById(SIDE_BAR) as any;
+  if (!sideBarNode) {
+    return;
+  }
+  const currentWeight = sideBarNode?.getWeight?.() ?? sideBarWeight;
+  const isOpen = typeof currentWeight === 'number' && currentWeight > 0.001;
+
+  if (isOpen) {
+    if (typeof currentWeight === 'number' && currentWeight > 0) {
+      setSideBarWeight(currentWeight);
+    }
+    updateTabAttributes(SIDE_BAR, { weight: 0.0001 }, model);
+    updateTabAttributes(LIBRARY_TABSET_ID, { minWidth: 0 }, model);
     handleSideBarElements(false, sideBarElements);
   } else {
-    updateTabAttributes(
-      SIDE_BAR,
-      { width: sideBarWidth + SPLITTER_SIZE },
-      model
-    );
+    const restoredWeight =
+      sideBarWeight && sideBarWeight > 0 ? sideBarWeight : SIDE_BAR_WEIGHT;
+
+    updateTabAttributes(LIBRARY_TABSET_ID, { minWidth: MIN_WIDTH }, model);
+    updateTabAttributes(SIDE_BAR, { weight: restoredWeight }, model);
     handleSideBarElements(true, sideBarElements);
   }
 };
@@ -88,7 +102,9 @@ export const getMainSearchOptions = (
 
   for (const key of [TreeEntityTypes.CHAIN, TreeEntityTypes.DATASET]) {
     const options: ContextMenuOption[] = [];
-    treeItemGroups[key].forEach((item) => {
+    const groupItems = treeItemGroups[key] ?? [];
+
+    groupItems.forEach((item) => {
       if (item.label.toLowerCase().includes(text.toLowerCase())) {
         options.push({
           groupLabel:

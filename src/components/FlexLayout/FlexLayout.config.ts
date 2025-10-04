@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 const ROW_ID = 'row';
 export const SIDE_BAR = 'side_bar';
-const LIBRARY = 'library';
+export const LIBRARY_TABSET_ID = 'library';
 export const TOOLS = 'tools';
 export const PROMPT_EDITOR_TAB_SET_ID = 'promptEditorTabset';
 export const OUTPUTS_TAB_SET_ID = 'outputsTabset';
@@ -25,8 +25,10 @@ export const DATASET_TAB_TYPE = 'datasetTab';
 export const WORKFLOW_TAB_TYPE = 'workflowTab';
 export const MIN_WIDTH = 280;
 export const SPLITTER_SIZE = 6;
-export const TOOLS_HEIGHT_EXPANDED = 284;
-export const TOOLS_HEIGHT_COLLAPSED = 35;
+export const LIBRARY_TABSET_WEIGHT = 100;
+export const TOOLS_WEIGHT_EXPANDED = 24;
+export const TOOLS_WEIGHT_COLLAPSED = 2;
+export const SIDE_BAR_WEIGHT = 18;
 
 export enum TabIcons {
   chainIcon = 'chainIcon',
@@ -214,15 +216,16 @@ export const generateDefaultJson: () => IJsonModel = () => ({
       {
         id: SIDE_BAR,
         type: LayoutTypes.row,
-        width: MIN_WIDTH,
+        weight: SIDE_BAR_WEIGHT,
         children: [
           {
-            id: LIBRARY,
+            id: LIBRARY_TABSET_ID,
             type: LayoutTypes.tabset,
             enableSingleTabStretch: true,
             enableDrag: false,
             enableDrop: false,
             minWidth: MIN_WIDTH,
+            weight: LIBRARY_TABSET_WEIGHT,
             children: [
               {
                 type: LayoutTypes.tab,
@@ -237,7 +240,7 @@ export const generateDefaultJson: () => IJsonModel = () => ({
           {
             id: TOOLS,
             type: LayoutTypes.tabset,
-            height: TOOLS_HEIGHT_EXPANDED,
+            weight: TOOLS_WEIGHT_EXPANDED,
             enableSingleTabStretch: true,
             enableDrag: false,
             enableDrop: false,

@@ -34,7 +34,6 @@ import { setModel } from 'store/flexLayoutModel/flexLayoutModelSlice';
 import {
   generateDefaultJson,
   tabSetMap,
-  LayoutComponentNames,
   PROMPT_EDITOR_TAB_SET_ID,
   TabSetOrder,
   tabMap,
@@ -44,18 +43,99 @@ import {
   DATASET_TAB_TYPE,
   WORKSPACE_SETTINGS_TAB_TYPE,
   WORKFLOW_TAB_TYPE,
+  SIDE_BAR,
+  LIBRARY_TABSET_ID,
+  MIN_WIDTH,
+  SIDE_BAR_WEIGHT,
+  LIBRARY_TABSET_WEIGHT,
+  TOOLS,
+  TOOLS_WEIGHT_COLLAPSED,
+  TOOLS_WEIGHT_EXPANDED,
 } from './FlexLayout.config';
 import { getTree } from '../Tree/Tree.helper';
 import { WorkspaceImage } from '../Forms/CreateWorkspaceForm/WorkspaceImage';
 
 const FLEX_LAYOUT_MODEL_ID = 'flexLayoutModel';
 
+const normalizeLayoutJson = (json: IJsonModel): void => {
+  try {
+    const rootChildren = (json.layout?.children ?? []) as any[];
+    const sideBarNode = rootChildren.find((child) => child?.id === SIDE_BAR);
+
+    if (sideBarNode) {
+      if (typeof sideBarNode.weight !== 'number' || sideBarNode.weight <= 0) {
+        sideBarNode.weight = SIDE_BAR_WEIGHT;
+      }
+
+      if (sideBarNode.weight > SIDE_BAR_WEIGHT * 5) {
+        sideBarNode.weight = SIDE_BAR_WEIGHT;
+      }
+
+      if ('width' in sideBarNode) {
+        delete sideBarNode.width;
+      }
+
+      const libraryTabset = (sideBarNode.children ?? []).find(
+        (child: any) => child?.id === LIBRARY_TABSET_ID
+      );
+
+      if (libraryTabset) {
+        if (
+          typeof libraryTabset.weight !== 'number' ||
+          libraryTabset.weight <= 0
+        ) {
+          libraryTabset.weight = LIBRARY_TABSET_WEIGHT;
+        }
+        if ('height' in libraryTabset) {
+          delete libraryTabset.height;
+        }
+        const isCollapsed =
+          typeof sideBarNode.weight === 'number' && sideBarNode.weight <= 0.001;
+        libraryTabset.minWidth = isCollapsed ? 0 : MIN_WIDTH;
+      }
+
+      const toolsTabset = (sideBarNode.children ?? []).find(
+        (child: any) => child?.id === TOOLS
+      );
+
+      if (toolsTabset) {
+        if ('height' in toolsTabset) {
+          delete toolsTabset.height;
+        }
+        const toolsWeight = toolsTabset.weight;
+        if (typeof toolsWeight !== 'number' || toolsWeight <= 0) {
+          toolsTabset.weight = TOOLS_WEIGHT_EXPANDED;
+        } else if (toolsWeight < TOOLS_WEIGHT_COLLAPSED) {
+          toolsTabset.weight = TOOLS_WEIGHT_COLLAPSED;
+        }
+      }
+    }
+  } catch (error) {
+    console.warn('Unable to normalize flex layout json', error);
+  }
+};
+
 export const getLayoutModel = (): Model => {
   const savedModel = sessionStorage.getItem(FLEX_LAYOUT_MODEL_ID);
-  const json = (
-    savedModel ? JSON.parse(savedModel) : generateDefaultJson()
-  ) as IJsonModel;
-  return Model.fromJson(json);
+  const defaultModel = generateDefaultJson();
+  normalizeLayoutJson(defaultModel);
+
+  if (!savedModel) {
+    return Model.fromJson(defaultModel);
+  }
+
+  try {
+    const json = JSON.parse(savedModel) as IJsonModel;
+    normalizeLayoutJson(json);
+    return Model.fromJson(json);
+  } catch (error) {
+    console.warn(
+      'Unable to restore flex layout model from session storage',
+      error
+    );
+    sessionStorage.removeItem(FLEX_LAYOUT_MODEL_ID);
+    return Model.fromJson(defaultModel);
+  }
 };
 
 const saveLayoutModel = (model: Model): void => {
@@ -210,29 +290,6 @@ export const tabRender =
       );
     }
   };
-
-export const handleTabDrag = (
-  dragging: TabNode | IJsonTabNode,
-  over: TabNode,
-  x: number,
-  y: number
-): any => {
-  const isFirstColumn = over.getName() === LayoutComponentNames.library;
-
-  if (isFirstColumn) {
-    return {
-      x,
-      y,
-      width: 0,
-      height: 0,
-      invalidated: () => {},
-      cursor: 'not-allowed',
-      callback: () => {},
-    };
-  }
-
-  return undefined;
-};
 
 export const updateTabAttributes = (
   tabId: string,
