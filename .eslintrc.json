@@ -28,6 +28,11 @@
     "@typescript-eslint/no-explicit-any": "off",
     "prettier/prettier": "error"
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "ignorePatterns": [
     "main.js",
     "preload.js",

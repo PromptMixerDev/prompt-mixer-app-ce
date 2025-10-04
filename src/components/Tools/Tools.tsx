@@ -26,8 +26,8 @@ import {
   OUTPUTS_TAB_SET_ID,
   PROMPT_EDITOR_TAB_SET_ID,
   TabSetOrder,
-  TOOLS_HEIGHT_EXPANDED,
-  TOOLS_HEIGHT_COLLAPSED,
+  TOOLS_WEIGHT_EXPANDED,
+  TOOLS_WEIGHT_COLLAPSED,
   TOOLS,
   CONNECTORS_TAB_SET_ID,
 } from '../FlexLayout/FlexLayout.config';
@@ -55,14 +55,13 @@ export const Tools: React.FC = () => {
   const toolRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
-    if (toolRef.current) {
-      const height = toolRef.current?.clientHeight;
+    const toolsNode = model.getNodeById(TOOLS) as any;
+    const currentWeight = toolsNode?.getWeight?.();
 
-      if (height < TOOLS_HEIGHT_COLLAPSED) {
-        setCollapsed(true);
-      }
+    if (typeof currentWeight === 'number') {
+      setCollapsed(currentWeight <= TOOLS_WEIGHT_COLLAPSED + 0.5);
     }
-  }, []);
+  }, [model]);
 
   const updateButtonPosition = (): void => {
     if (toolRef.current) {
@@ -74,8 +73,8 @@ export const Tools: React.FC = () => {
   useWindowResize(updateButtonPosition);
 
   const handleClick = (): void => {
-    const height = collapsed ? TOOLS_HEIGHT_EXPANDED : TOOLS_HEIGHT_COLLAPSED;
-    updateTabAttributes(TOOLS, { height }, model);
+    const weight = collapsed ? TOOLS_WEIGHT_EXPANDED : TOOLS_WEIGHT_COLLAPSED;
+    updateTabAttributes(TOOLS, { weight }, model);
     setCollapsed(!collapsed);
   };
 
