@@ -1,4 +1,4 @@
-import { promises as fs, existsSync, mkdirSync } from 'fs';
+import { promises as fs, existsSync, mkdirSync, rmSync, renameSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { app, net } from 'electron';
 
@@ -30,33 +30,70 @@ async function fetchUrl(url) {
 }
 
 export async function installConnector(connectorName, githubReleaseApiUrl) {
-  const connectorPath = join(connectorsPath, connectorName);
-  if (!existsSync(connectorPath)) {
-    mkdirSync(connectorPath, { recursive: true });
+  const connectorBasePath = join(connectorsPath, connectorName);
+  if (!existsSync(connectorBasePath)) {
+    mkdirSync(connectorBasePath, { recursive: true });
   }
 
   console.log(`Installing connector: ${connectorName}`);
 
   try {
-    // Fetch the latest release data from GitHub API
     const releaseBuffer = await fetchUrl(githubReleaseApiUrl);
     const releaseData = JSON.parse(releaseBuffer.toString());
+    const assetFiles = releaseData.assets.filter(
+      (asset) => !asset.name.endsWith('.zip') && !asset.name.endsWith('.tar.gz')
+    );
 
-    // Filter out source code archives
-    const assetFiles = releaseData.assets.filter(asset => !asset.name.endsWith('.zip') && !asset.name.endsWith('.tar.gz'));
-
-    // Download each asset file
-    for (const asset of assetFiles) {
-      const assetPath = join(connectorPath, asset.name);
-      console.log(`Downloading asset: ${asset.name}`);
-
-      const assetBuffer = await fetchUrl(asset.browser_download_url);
-
-      await fs.writeFile(assetPath, assetBuffer);
-      console.log(`${asset.name} has been saved successfully.`);
+    if (!assetFiles.length) {
+      throw new Error('No distributable assets found for connector release');
     }
 
-    console.log(`${connectorName} has been installed successfully.`);
+    const versionTag = releaseData.tag_name ?? `build-${Date.now()}`;
+    const stagingDir = join(connectorBasePath, `.tmp-${versionTag}`);
+
+    if (existsSync(stagingDir)) {
+      rmSync(stagingDir, { recursive: true, force: true });
+    }
+    mkdirSync(stagingDir, { recursive: true });
+
+    for (const asset of assetFiles) {
+      const assetBuffer = await fetchUrl(asset.browser_download_url);
+      const assetPath = join(stagingDir, asset.name);
+      console.log(`Downloading asset: ${asset.name}`);
+      await fs.writeFile(assetPath, assetBuffer);
+    }
+
+    const versionedDir = join(connectorBasePath, versionTag);
+    if (existsSync(versionedDir)) {
+      rmSync(versionedDir, { recursive: true, force: true });
+    }
+
+    renameSync(stagingDir, versionedDir);
+
+    const manifestPath = join(connectorBasePath, 'manifest.json');
+    await fs.writeFile(
+      manifestPath,
+      JSON.stringify(
+        {
+          versionTag,
+          updatedAt: new Date().toISOString(),
+          assets: assetFiles.map((asset) => asset.name),
+        },
+        null,
+        2
+      ),
+      'utf-8'
+    );
+
+    const entries = readdirSync(connectorBasePath, { withFileTypes: true });
+    entries.forEach((entry) => {
+      const dirPath = join(connectorBasePath, entry.name);
+      if (entry.isDirectory() && entry.name !== versionTag && entry.name !== '.tmp') {
+        rmSync(dirPath, { recursive: true, force: true });
+      }
+    });
+
+    console.log(`${connectorName} has been installed successfully to ${versionedDir}.`);
   } catch (error) {
     console.error(`Failed to install ${connectorName}:`, error);
     throw error;

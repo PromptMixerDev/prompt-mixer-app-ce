@@ -1,4 +1,4 @@
-import {fileURLToPath} from 'url';
+import {fileURLToPath, pathToFileURL} from 'url';
 import path from 'path';
 import {app, BrowserWindow, ipcMain, shell} from 'electron';
 import fs from 'fs';
@@ -138,7 +138,15 @@ app.on('second-instance', (event, commandLine) => {
 
 async function checkMainJsExists(connectorsPath, folder) {
     try {
-        await fs.promises.access(path.join(connectorsPath, folder, 'main.js'), fs.constants.F_OK);
+        const manifestPath = path.join(connectorsPath, folder, 'manifest.json');
+        const currentVersion = await getCurrentConnectorVersion(manifestPath);
+        if (!currentVersion) {
+            return false;
+        }
+        await fs.promises.access(
+            path.join(connectorsPath, folder, currentVersion, 'main.js'),
+            fs.constants.F_OK
+        );
         return true;
     } catch (error) {
         return false;
@@ -154,7 +162,12 @@ async function getInstalledConnectors() {
 
         for (const folder of folders) {
             if (await checkMainJsExists(connectorsPath, folder)) {
-                const configPath = path.join(connectorsPath, folder, 'main.js');
+                const manifestPath = path.join(connectorsPath, folder, 'manifest.json');
+                const versionTag = await getCurrentConnectorVersion(manifestPath);
+                if (!versionTag) {
+                    continue;
+                }
+                const configPath = path.join(connectorsPath, folder, versionTag, 'main.js');
                 delete require.cache[require.resolve(configPath)];
                 const configFile = require(configPath);
 
@@ -171,21 +184,34 @@ async function getInstalledConnectors() {
 }
 
 
-async function runConnector(connectorFolderPath, model, prompts, properties, settings) {
-    try {
-        const connectorPath = path.join(app.getPath('userData'), 'connectors', connectorFolderPath, 'main.js');
-        const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`).href;
+async function loadConnectorModule(connectorFolder, entryPoint = 'main.js') {
+  const connectorDir = path.join(app.getPath('userData'), 'connectors', connectorFolder);
+  const manifestPath = path.join(connectorDir, 'manifest.json');
+  const versionTag = await getCurrentConnectorVersion(manifestPath);
 
-        // Dynamically import the connector script using the URL
-        const plugin = await import(connectorUrl);
-        if (plugin && typeof plugin.main === 'function') {
-            // Call the main function of the connector script
-            return await plugin.main(model, prompts, properties, settings);
-        }
-    } catch (error) {
-        console.error('Error running plugin:', error);
-        return { Error: error, ModelType: model };
+  if (!versionTag) {
+    throw new Error(`Connector ${connectorFolder} does not have a valid manifest.json`);
+  }
+
+  const connectorPath = path.join(connectorDir, versionTag, entryPoint);
+  await fs.promises.access(connectorPath, fs.constants.R_OK);
+
+  const moduleUrl = pathToFileURL(connectorPath);
+  return await import(moduleUrl.href);
+}
+
+async function runConnector(connectorFolderPath, model, prompts, properties, settings) {
+  try {
+    const plugin = await loadConnectorModule(connectorFolderPath);
+    if (plugin && typeof plugin.main === 'function') {
+      // Call the main function of the connector script
+      return await plugin.main(model, prompts, properties, settings);
     }
+    throw new Error('Connector entry point missing exported main function');
+  } catch (error) {
+    console.error('Error running plugin:', error);
+    return { Error: error, ModelType: model };
+  }
 }
 
 ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
@@ -214,12 +240,7 @@ ipcMain.on('request-installed-connectors', async (event, savedSettings) => {
 });
 
 ipcMain.on('run-connector-script', async (event, connector, prompts, properties, settings, outputId, workflow) => {
-    const baseDir  = path.join(app.getPath('userData'), 'connectors')
-    const connectorPath = path.join(baseDir, connector.ConnectorFolder, 'main.js');
-
     try {
-        await fs.promises.stat(connectorPath);
-        // If fs.stat does not throw, the file exists, so run the connector
         const res = await runConnector(connector.ConnectorFolder, connector.Model, prompts, properties, settings);
         
         event.reply('connector-output', outputId, connector.Model, res, workflow);
@@ -252,19 +273,8 @@ async function callGetDynamicModelList(connector, savedSettings) {
     );
   }
 
-  const baseDir = path.join(app.getPath('userData'), 'connectors');
-
   try {
-    const connectorPath = path.join(
-      baseDir,
-      connector.connectorFolder,
-      'main.js'
-    );
-
-    const connectorUrl = new URL(`file://${connectorPath.replace(/\\/g, '/')}`)
-      .href;
-
-    const plugin = await import(connectorUrl);
+    const plugin = await loadConnectorModule(connector.connectorFolder);
 
     if (hasGetDynamicModelList(plugin)) {
         try {
@@ -388,4 +398,3 @@ autoUpdater.on('update-downloaded', (info) => {
 autoUpdater.on('error', (error) => {
   mainWindow.webContents.send('update-error', error);
 });
-
