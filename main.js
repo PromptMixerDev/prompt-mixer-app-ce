@@ -138,15 +138,8 @@ app.on('second-instance', (event, commandLine) => {
 
 async function checkMainJsExists(connectorsPath, folder) {
     try {
-        const manifestPath = path.join(connectorsPath, folder, 'manifest.json');
-        const currentVersion = await getCurrentConnectorVersion(manifestPath);
-        if (!currentVersion) {
-            return false;
-        }
-        await fs.promises.access(
-            path.join(connectorsPath, folder, currentVersion, 'main.js'),
-            fs.constants.F_OK
-        );
+        const entryPath = await resolveConnectorEntryPath(folder, 'main.js', connectorsPath);
+        await fs.promises.access(entryPath, fs.constants.F_OK);
         return true;
     } catch (error) {
         return false;
@@ -162,12 +155,7 @@ async function getInstalledConnectors() {
 
         for (const folder of folders) {
             if (await checkMainJsExists(connectorsPath, folder)) {
-                const manifestPath = path.join(connectorsPath, folder, 'manifest.json');
-                const versionTag = await getCurrentConnectorVersion(manifestPath);
-                if (!versionTag) {
-                    continue;
-                }
-                const configPath = path.join(connectorsPath, folder, versionTag, 'main.js');
+                const configPath = await resolveConnectorEntryPath(folder, 'main.js', connectorsPath);
                 delete require.cache[require.resolve(configPath)];
                 const configFile = require(configPath);
 
@@ -184,16 +172,45 @@ async function getInstalledConnectors() {
 }
 
 
-async function loadConnectorModule(connectorFolder, entryPoint = 'main.js') {
-  const connectorDir = path.join(app.getPath('userData'), 'connectors', connectorFolder);
+async function readConnectorManifest(manifestPath) {
+  try {
+    const manifestRaw = await fs.promises.readFile(manifestPath, 'utf-8');
+    const parsed = JSON.parse(manifestRaw);
+    if (parsed && typeof parsed === 'object') {
+      return parsed;
+    }
+  } catch (error) {
+    if (error?.code !== 'ENOENT') {
+      console.error(`Failed to read connector manifest at ${manifestPath}:`, error);
+    }
+  }
+  return null;
+}
+
+async function getCurrentConnectorVersion(manifestPath) {
+  const manifest = await readConnectorManifest(manifestPath);
+  return manifest?.versionTag ?? null;
+}
+
+async function resolveConnectorEntryPath(
+  connectorFolder,
+  entryPoint = 'main.js',
+  connectorsRoot = path.join(app.getPath('userData'), 'connectors')
+) {
+  const connectorDir = path.join(connectorsRoot, connectorFolder);
   const manifestPath = path.join(connectorDir, 'manifest.json');
   const versionTag = await getCurrentConnectorVersion(manifestPath);
 
-  if (!versionTag) {
-    throw new Error(`Connector ${connectorFolder} does not have a valid manifest.json`);
+  if (versionTag) {
+    return path.join(connectorDir, versionTag, entryPoint);
   }
 
-  const connectorPath = path.join(connectorDir, versionTag, entryPoint);
+  // Legacy layout fallback (pre-manifest connectors)
+  return path.join(connectorDir, entryPoint);
+}
+
+async function loadConnectorModule(connectorFolder, entryPoint = 'main.js') {
+  const connectorPath = await resolveConnectorEntryPath(connectorFolder, entryPoint);
   await fs.promises.access(connectorPath, fs.constants.R_OK);
 
   const moduleUrl = pathToFileURL(connectorPath);
