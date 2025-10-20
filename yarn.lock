@@ -8908,10 +8908,10 @@ idb@^7.0.1:
   resolved "https://registry.yarnpkg.com/idb/-/idb-7.1.1.tgz#d910ded866d32c7ced9befc5bfdf36f572ced72b"
   integrity sha512-gchesWBzyvGHRO9W8tzUWFDycow5gwjvFKfyV9FF32Y7F50yZMp7mP+T2mJIWFx49zicqyC4uefHM17o6xKIVQ==
 
-idb@^8.0.1:
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/idb/-/idb-8.0.1.tgz#15e8be673413d6caf4beefacf086c8902d785e1e"
-  integrity sha512-EkBCzUZSdhJV8PxMSbeEV//xguVKZu9hZZulM+2gHXI0t2hGVU3eYE6/XnH77DS6FM2FY8wl17aDcu9vXpvLWQ==
+idb@^8.0.3:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/idb/-/idb-8.0.3.tgz#c91e558f15a8d53f1d7f53a094d226fc3ad71fd9"
+  integrity sha512-LtwtVyVYO5BqRvcsKuB2iUMnHwPVByPCXFXOpuU96IZPPoPN6xjOGxZQ74pgSVVLQWtUOYgyeL4GE98BY5D3wg==
 
 identity-obj-proxy@^3.0.0:
   version "3.0.0"
