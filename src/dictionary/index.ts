@@ -50,6 +50,8 @@ export const DICTIONARY = {
     moveTo: 'Move to...',
     workspaces: 'Workspaces',
     checkForUpgrade: 'Check for upgrade',
+    installedVersion: 'Installed',
+    latestVersion: 'Latest',
     noUpdate: 'Your application is up to date',
     updateAvaible: 'Update Avaible',
     newVersionReadyToInstall:

@@ -11,6 +11,7 @@ export const mapToConnectors = (
   return data.map((item: PromptMixerConnector) => ({
     connectorFolder: item.slug,
     connectorName: item.name,
+    latestVersion: item.latest_version,
     models: [],
     settings: [],
     description: item.description,

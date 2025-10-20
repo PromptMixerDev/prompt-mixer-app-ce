@@ -13,6 +13,8 @@ interface ConnectorCardProps {
   connector: IConnector;
   setSelectedConnector: (value: IConnector) => void;
   isUpdateAvailable: boolean;
+  installedVersion?: string;
+  latestVersion?: string;
 }
 
 export const ConnectorCard = React.forwardRef<
@@ -20,12 +22,26 @@ export const ConnectorCard = React.forwardRef<
   ConnectorCardProps
 >(
   (
-    { connector, setSelectedConnector, isUpdateAvailable }: ConnectorCardProps,
+    {
+      connector,
+      setSelectedConnector,
+      isUpdateAvailable,
+      installedVersion,
+      latestVersion,
+    }: ConnectorCardProps,
     ref
   ) => {
     const [isUpdateButtonDisabled, setIsUpdateButtonDisabled] =
       useState<boolean>(false);
-    const { connectorName, author, description, updated, tags } = connector;
+    const {
+      connectorName,
+      author,
+      description,
+      updated,
+      tags,
+      installedVersion: connectorInstalledVersion,
+      latestVersion: connectorLatestVersion,
+    } = connector;
 
     const tagsString = tags?.join(', ');
     const { send } = useIpcRenderer({
@@ -33,6 +49,14 @@ export const ConnectorCard = React.forwardRef<
         setIsUpdateButtonDisabled(false);
       },
     });
+
+    const installedVersionToDisplay =
+      installedVersion ?? connectorInstalledVersion ?? undefined;
+    const latestVersionToDisplay =
+      latestVersion ?? connectorLatestVersion ?? undefined;
+
+    const formatVersion = (value?: string): string =>
+      value && value.trim() ? value : DICTIONARY.labels.unknown;
 
     const handleUpdateConnector = (e: React.MouseEvent) => {
       e.stopPropagation();
@@ -58,6 +82,33 @@ export const ConnectorCard = React.forwardRef<
             {author && <div className={styles.info}>{author}</div>}
             {updated && (
               <div className={styles.info}>{`Updated ${timeAgo(updated)}`}</div>
+            )}
+            {(installedVersionToDisplay || latestVersionToDisplay) && (
+              <div className={styles.versionRow}>
+                {installedVersionToDisplay && (
+                  <div className={styles.versionItem}>
+                    <span className={styles.versionLabel}>
+                      {DICTIONARY.labels.installedVersion}
+                    </span>
+                    <span className={styles.versionValue}>
+                      {formatVersion(installedVersionToDisplay)}
+                    </span>
+                  </div>
+                )}
+                {installedVersionToDisplay && latestVersionToDisplay && (
+                  <span className={styles.versionSeparator}>•</span>
+                )}
+                {latestVersionToDisplay && (
+                  <div className={styles.versionItem}>
+                    <span className={styles.versionLabel}>
+                      {DICTIONARY.labels.latestVersion}
+                    </span>
+                    <span className={styles.versionValue}>
+                      {formatVersion(latestVersionToDisplay)}
+                    </span>
+                  </div>
+                )}
+              </div>
             )}
           </div>
           {isUpdateAvailable && (

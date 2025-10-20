@@ -12,6 +12,35 @@
   line-height: var(--line-height-relaxed);
 }
 
+.versionRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: var(--font-size-small);
+  color: var(--lable-secondary);
+}
+
+.versionItem {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.versionLabel {
+  text-transform: uppercase;
+  font-size: var(--font-size-xsmall);
+  letter-spacing: 0.04em;
+}
+
+.versionValue {
+  color: var(--lable-primary);
+}
+
+.versionSeparator {
+  color: var(--lable-secondary);
+}
+
 .removeZone {
   display: flex;
   flex-wrap: wrap;

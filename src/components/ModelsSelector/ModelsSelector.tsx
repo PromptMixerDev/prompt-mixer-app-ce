@@ -20,6 +20,8 @@ export interface IConnector {
   connectorFolder: string;
   connectorName: string;
   connectorVersion: string;
+  installedVersion?: string;
+  latestVersion?: string;
   models: string[];
   settings: ConnectorParameter[];
   iconBase64?: string;

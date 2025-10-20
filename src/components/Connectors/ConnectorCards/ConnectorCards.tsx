@@ -18,6 +18,11 @@ import { mapToConnectors } from './ConnectorCards.helper';
 import { InstallConnectorPage } from '../InstallConnectorPage';
 import styles from './ConnectorCards.module.css';
 
+const normalizeVersion = (version?: string | null): string | undefined => {
+  if (!version) return undefined;
+  return version.trim().replace(/^v/i, '') || undefined;
+};
+
 interface ConnectorCardsProps {
   activeTab: Tabs;
   newConnectorOpened: boolean;
@@ -60,6 +65,11 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
   const mappedOriginInstoledConnectors = mapToConnectors(
     originInstoledConnectors ?? []
   );
+  const selectedOriginConnector =
+    selectedConnector &&
+    mappedOriginInstoledConnectors.find(
+      (el) => el.connectorFolder === selectedConnector.connectorFolder
+    );
 
   const hasMore = data?.total_connectors
     ? page * PAGE_LIMIT < data.total_connectors
@@ -122,6 +132,13 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                   const installedConnector = installedConnectors.find(
                     (el) => el.connectorFolder === connector.connectorFolder
                   );
+                  const installedVersion = normalizeVersion(
+                    installedConnector?.installedVersion ??
+                      installedConnector?.connectorVersion
+                  );
+                  const latestVersion = normalizeVersion(
+                    connector.latestVersion ?? connector.connectorVersion
+                  );
                   return (
                     <ConnectorCard
                       ref={
@@ -134,11 +151,13 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                       setSelectedConnector={setSelectedConnector}
                       isUpdateAvailable={
                         !!(
-                          installedConnector &&
-                          connector.connectorVersion !==
-                            installedConnector.connectorVersion
+                          installedVersion &&
+                          latestVersion &&
+                          installedVersion !== latestVersion
                         )
                       }
+                      installedVersion={installedVersion}
+                      latestVersion={latestVersion}
                     />
                   );
                 })}
@@ -152,6 +171,14 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                 const originConnector = mappedOriginInstoledConnectors.find(
                   (el) => el.connectorFolder === connector.connectorFolder
                 );
+                const installedVersion = normalizeVersion(
+                  connector.installedVersion ?? connector.connectorVersion
+                );
+                const latestVersion = normalizeVersion(
+                  originConnector?.latestVersion ??
+                    originConnector?.connectorVersion ??
+                    connector.latestVersion
+                );
                 return (
                   <ConnectorCard
                     key={connector.connectorFolder}
@@ -159,11 +186,13 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
                     setSelectedConnector={setSelectedConnector}
                     isUpdateAvailable={
                       !!(
-                        originConnector &&
-                        originConnector?.connectorVersion !==
-                          connector?.connectorVersion
+                        installedVersion &&
+                        latestVersion &&
+                        installedVersion !== latestVersion
                       )
                     }
+                    installedVersion={installedVersion}
+                    latestVersion={latestVersion}
                   />
                 );
               })}
@@ -174,6 +203,10 @@ export const ConnectorCards: React.FC<ConnectorCardsProps> = ({
       {selectedConnector && installedConnector && !newConnectorOpened && (
         <ConnectorPage
           connector={installedConnector}
+          latestVersion={
+            selectedOriginConnector?.latestVersion ??
+            selectedOriginConnector?.connectorVersion
+          }
           setSelectedConnector={setSelectedConnector}
         />
       )}

@@ -160,7 +160,25 @@ async function getInstalledConnectors() {
                 const configFile = require(configPath);
 
                 if (configFile) {
-                    installedConnectors.push({ connectorFolder: folder, ...configFile.config });
+                    const manifestPath = path.join(connectorsPath, folder, 'manifest.json');
+                    const versionTag = await getCurrentConnectorVersion(manifestPath);
+                    const installedVersion =
+                      versionTag ??
+                      configFile?.config?.connectorVersion ??
+                      configFile?.config?.version ??
+                      undefined;
+
+                    const connectorData = {
+                      connectorFolder: folder,
+                      ...configFile.config,
+                      installedVersion,
+                    };
+
+                    if (!connectorData.connectorVersion && installedVersion) {
+                      connectorData.connectorVersion = installedVersion;
+                    }
+
+                    installedConnectors.push(connectorData);
                 }
             }
         }
