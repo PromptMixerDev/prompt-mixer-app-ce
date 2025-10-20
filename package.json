@@ -55,7 +55,7 @@
     "@wdio/local-runner": "9.2.15",
     "@wdio/spec-reporter": "9.15.0",
     "concurrently": "^9.2.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "electron": "^38.2.0",
     "electron-builder": "^24.13.3",
     "eslint": "^8.57.0",
